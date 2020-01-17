@@ -49,7 +49,7 @@ class TanksWorldFPVEnv(gym.Env):
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
         #self._filename='/home/rivercg1/projects/l2m/exe/machine/l2explorer_0_1_0_linux_machine.x86_64'
-        self._filename =  '/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.0/tanks.x86_64'
+        self._filename =  '/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.1/aisafetytanks_0.1.1.x86_64'
         self.observation_space = None
         self.action_space = None
         self._seed = None
@@ -87,6 +87,19 @@ class TanksWorldFPVEnv(gym.Env):
 
         return state
 
+    def is_done(self,state):
+        red_health = [3,10,17,24,31]
+        blue_health = [38,45,52,59,66]
+
+        red_dead = [state[i]<=0 for i in red_health]
+        blue_dead = [state[i]<=0 for i in blue_health]
+        #print('red ',[state[i] for i in red_health], ' blue_dead ',[state[i] for i in blue_health])
+
+        if  all(red_dead) or all(blue_dead):
+            return True
+        return False
+
+
     def step(self, action):
         #render and get state as an image
         action = np.array(action)
@@ -97,9 +110,11 @@ class TanksWorldFPVEnv(gym.Env):
         self.done = self._env_info.local_done
         info = [{}]*10
 
-        print('stepping ',self.reward,self.done)
-        print('lengths ',len(self.state),len(self.reward),len(self.done),len(info))
-        return self.state, self.reward, self.done[0], info
+        #print('stepping ',self.reward,self.done)
+        #print('lengths ',len(self.state),len(self.reward),len(self.done),len(info))
+        #print('visual observation shapes ',self._env_info.vector_observations[0])
+        print('reward ',self.reward)
+        return self.state, self.reward, self.is_done(self._env_info.vector_observations[0]), info
 
     def render(self):
         '''Render by returning visual observation 1 for display'''
