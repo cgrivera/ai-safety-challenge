@@ -2,7 +2,16 @@
 Home project for AI Arena's Tanks! challenge environment.
 
 ### Installation
+These install instructions are for linux clients.  We recommend installing anaconda distribution of python.
+
+```` sh
+conda
+````
+
+
 mlagents==0.9.3
+Create a conda Environment
+
 
 
 ### Game Controller -> Key Code

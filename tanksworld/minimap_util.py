@@ -9,7 +9,7 @@ def point_offset_point(p_origin, angle, radius):
     return px, py
 
 def point_relative_point_heading(point, new_origin, heading):
-    
+
     #get point (x,y) as (radius, angle)
     dx = point[0] - new_origin[0]
     dy = point[1] - new_origin[1]
@@ -98,9 +98,13 @@ def draw_tanks_in_channel(tank_data, reference_tank):
 
     return img
 
+def barriers_for_player(barriers,angle):
+    res = cv2.resize(np.squeeze(barriers[:,:,0]), dsize=(84,84), interpolation=cv2.INTER_CUBIC)
+
+    return np.expand_dims(res,axis=2)
 # expects state data chopped on a tank by tank basis
 # ie. for 5 red, 5 blue, 2 neutral, expects a length 12 array
-def minimap_for_player(tank_data, tank_idx):
+def minimap_for_player(tank_data, tank_idx, barriers):
 
     my_data = tank_data[tank_idx]
 
@@ -119,7 +123,9 @@ def minimap_for_player(tank_data, tank_idx):
     ally_channel = draw_tanks_in_channel(ally, my_data)
     enemy_channel = draw_tanks_in_channel(enemy, my_data)
     neutral_channel = draw_tanks_in_channel(neutral, my_data)
-
+    #barriers_channel = np.zeros((84, 84, 1), np.uint8)
+    #barriers_channel[:80,:80,0] = barriers[:,:,0]
+    barriers_channel = barriers_for_player(barriers,my_data[2])
     #flip images for red team so they are on the correct side of the map from their POV
     # if flip:
     #     this_channel = np.fliplr(np.flipud(this_channel))
@@ -127,12 +133,17 @@ def minimap_for_player(tank_data, tank_idx):
     #     enemy_channel = np.fliplr(np.flipud(enemy_channel))
     #     neutral_channel = np.fliplr(np.flipud(neutral_channel))
 
-    return np.asarray([this_channel, ally_channel, enemy_channel, neutral_channel]).astype(np.float32) / 255.0
+    image = np.asarray([ally_channel, enemy_channel, barriers_channel]).astype(np.float32)
+    image = np.squeeze(image)
+    #print(image.shape)
+    display_cvimage("tank"+str(tank_idx), np.transpose(image,(1,2,0)))
+
+    return np.asarray([ally_channel, enemy_channel, neutral_channel,barriers_channel]).astype(np.float32) / 255.0
 
 
 def display_cvimage(window_name, img):
 
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)    
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     cv2.imshow(window_name,  img)
     cv2.waitKey(1)
 

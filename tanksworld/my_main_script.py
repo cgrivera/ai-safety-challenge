@@ -15,11 +15,11 @@ arena = make_stem(cfg.MAKE_ENV_LOCATION, cfg.LOG_COMMS_DIR, cfg.OBS_SPACES, cfg.
 # --- only the root process will get beyond this point ---
 
 #this is a list of assignments of entity <---> policy
-match_list = [[1,1,1,1,1,2,2,2,2,2]]*2
+match_list = [[1,1,1,1,1,1,1,1,1,1]]*1
 
 #for each policy above, what type of policy is it
 #you can specify a string name or TODO: a path to a custom algo
-policy_types = {1:"ppo",2:"ppo"}
+policy_types = {1:"ppo"}
 
 #train with this configuration
 while True:

@@ -23,6 +23,7 @@ import os
 from mpi4py import MPI
 import numpy as np
 import matplotlib.pyplot as plt
+from minimap_util import minimap_for_player
 #from .utils import get_l2explorer_worker_id, get_l2explorer_app_location
 
 # Enforce Python 3.6.x (the only version supported by Unity MLAgents)
@@ -49,7 +50,7 @@ class TanksWorldFPVEnv(gym.Env):
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
         #self._filename='/home/rivercg1/projects/l2m/exe/machine/l2explorer_0_1_0_linux_machine.x86_64'
-        self._filename =  '/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.1/aisafetytanks_0.1.1.x86_64'
+        self._filename =  '/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.2/TanksWorld.x86_64'
         self.observation_space = None
         self.action_space = None
         self._seed = None
@@ -58,9 +59,21 @@ class TanksWorldFPVEnv(gym.Env):
     def seed(self, val):
         self._seed = int(val)%TanksWorldFPVEnv._MAX_INT #integer seed required, convert
 
+    def get_state(self):
+        state = self._env_info.vector_observations[0]
+        #for i in range(0,84,7):
+        print('image shape ', np.array(self._env_info.visual_observations[1][0]).shape)
+        #plt.imshow(np.array(self._env_info.visual_observations[1][0]))
+        state_reformat = [[state[i+0],state[i+1],state[i+2]/180*1.5707,state[i+3]] for i in range(0,84,7)]
+        barriers = np.array(self._env_info.visual_observations[1][0])
+        #print('state shape ',np.squeeze(np.array(minimap_for_player(state_reformat,3)).transpose((3,1,2,0))).shape)
+        state_modified = [np.squeeze(np.array(minimap_for_player(state_reformat,i,barriers)).transpose((3,1,2,0))) for i in range(10)]
+        return state_modified
+
     def reset(self,**kwargs):
         # Reset the environment
         params ={}
+        self.dead = []
         if 'params' in kwargs:
             params = kwargs['params']
         if not TanksWorldFPVEnv._env:
@@ -80,10 +93,10 @@ class TanksWorldFPVEnv(gym.Env):
         brain = self._env.brains[self._default_brain]
         #lets pretend that i'm tank at index 3 , this will have to be fixed later
         self._env_info = self._env.reset(train_mode=0, config=params)[self._default_brain]
-        self.observation_space = gym.spaces.box.Box(0,255,(84,84,3))
+        self.observation_space = gym.spaces.box.Box(0,255,(84,84,4))
         self.action_space = gym.spaces.box.Box(-1,1,(3,))
 
-        state = self._env_info.visual_observations[0]
+        state = self.get_state()
 
         return state
 
@@ -99,14 +112,28 @@ class TanksWorldFPVEnv(gym.Env):
             return True
         return False
 
+    def objective(self,num):
+        state = self._env_info.vector_observations[0]
+        index = num*7
+        if state[index+3]<=0 and num not in self.dead:
+            self.dead.append(num)
+            return -1.0
+        if state[index+4]==1.0:
+            print("tank no ", num,' state vector ', [state[index+i] for i in range(7)])
+        if state[index+4]==1.0 and ((num<5 and state[index+6]==2.0) or (num>=5 and num<10 and state[index+5]==1.0)):
+            print("******************Got a hit!***********************")
+            print("tank no ", num,' state vector ', [state[index+i] for i in range(7)])
+            return .125
+        return 0.0
 
     def step(self, action):
         #render and get state as an image
         action = np.array(action)
         self._env_info = self._env.step(action)[self._default_brain]
 
-        self.state = self._env_info.visual_observations[0]
-        self.reward  = self._env_info.rewards
+        self.state = self.get_state()
+        #self.reward  = self._env_info.rewards
+        self.reward = [self.objective(i) for i in range(10)]
         self.done = self._env_info.local_done
         info = [{}]*10
 
