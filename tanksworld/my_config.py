@@ -1,12 +1,13 @@
 import os
 from make_env import make_env
 import gym
+import os
 
 # Tell the arena where it can put log files that describe the results of
 # specific policies.  This is also used to pass results between root processes.
 
-LOG_COMMS_DIR = os.getcwd()+"/logs/test_barriers/"
-
+LOG_COMMS_DIR = os.path.join([os.getcwd(),"/logs/",args.logdir,"/"])
+os.makedirs(LOG_COMMS_DIR, exist_ok=True)
 
 # Define where to find the environment
 # if make_env is in this directory, os.getcwd() will suffice

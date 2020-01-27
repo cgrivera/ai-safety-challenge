@@ -7,15 +7,22 @@ import math, time, random
 from arena5.core.stems import *
 from arena5.core.utils import mpi_print
 from arena5.core.policy_record import *
-
+import argparse
 import my_config as cfg
+
+
+parser = argparse.ArgumentParser(description='AI Safety TanksWorld')
+parser.add_argument('--logdir',help='the  location of saved policys and logs')
+parser.add_argument('--exe', help='the absolute path of the tanksworld executable')
+args = parser.parse_args()
+print(args.indir)
 
 arena = make_stem(cfg.MAKE_ENV_LOCATION, cfg.LOG_COMMS_DIR, cfg.OBS_SPACES, cfg.ACT_SPACES)
 
 # --- only the root process will get beyond this point ---
 
 #this is a list of assignments of entity <---> policy
-match_list = [[1,1,1,1,1,1,1,1,1,1]]*1
+match_list = [[1,1,1,1,1,1,1,1,1,1]]
 
 #for each policy above, what type of policy is it
 #you can specify a string name or TODO: a path to a custom algo
@@ -23,7 +30,7 @@ policy_types = {1:"ppo"}
 
 #train with this configuration
 while True:
-    arena.kickoff(match_list, policy_types, 15000)
+    arena.kickoff(match_list, policy_types, 15000,scale=True)
 
 # get policy 2 record
 # pr2 = PolicyRecord(2, cfg.LOG_COMMS_DIR)

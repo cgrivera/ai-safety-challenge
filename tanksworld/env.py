@@ -46,11 +46,11 @@ class TanksWorldFPVEnv(gym.Env):
         TanksWorldFPVEnv._env_params = []
 
     #DO this in reset to allow seed to be set
-    def __init__(self):
+    def __init__(self,exe):
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
         #self._filename='/home/rivercg1/projects/l2m/exe/machine/l2explorer_0_1_0_linux_machine.x86_64'
-        self._filename =  '/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.2/TanksWorld.x86_64'
+        self._filename =  exe#'/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.2/TanksWorld.x86_64'
         self.observation_space = None
         self.action_space = None
         self._seed = None
