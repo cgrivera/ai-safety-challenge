@@ -3,6 +3,10 @@ import cv2
 import numpy as np
 import math, random, time
 
+IMG_SZ = 128         #how big is the output image
+UNITY_SZ = 80.0     #what is the side length of the space in unity coordintaes
+SCALE = 120.0        #what is the side length of the space when drawn on our image
+
 def point_offset_point(p_origin, angle, radius):
     px = p_origin[0] + math.cos(angle)*radius
     py = p_origin[1] + math.sin(angle)*radius
@@ -32,12 +36,12 @@ def points_relative_point_heading(points, new_origin, heading):
 def draw_arrow(image, x, y, heading, health):
 
     #value of the tank is how much hp it has
-    arrow_size = 3.0
+    arrow_size = 2.0
     angle_dev = 2.0
     value = int((health/100.0)*128.0 + 127.0)
 
     #make verticies of an asteroid-like arrow shape
-    h = heading - 1.57
+    h = heading + 1.57
     pnose = point_offset_point([x, y], h, 2.0*arrow_size)
     pleft = point_offset_point([x, y], h-angle_dev, arrow_size)
     porg = [x, y]
@@ -50,43 +54,15 @@ def draw_arrow(image, x, y, heading, health):
 
 def draw_tanks_in_channel(tank_data, reference_tank):
 
-    img = np.zeros((84, 84, 1), np.uint8)
-
-
-    # constants
-    scale = 60.0
-    wall_value = 60
-    border_allowance_global = 2.0
-
-    #draw walls
-    wleft = [[-120.0, -120.0], [-40.0-border_allowance_global, -120.0], [-40.0-border_allowance_global, 120.0], [-120.0, 120.0]] #in world
-    wleft_rel = np.asarray([points_relative_point_heading(wleft, reference_tank[0:2], reference_tank[2])])
-    wleft_rel = (wleft_rel/80.0) * scale + 42.0
-    cv2.fillPoly(img, wleft_rel.astype(np.int32), wall_value)
-
-    wright = [[40.0+border_allowance_global, -120.0], [120.0, -120.0], [120.0, 120.0], [40.0+border_allowance_global, 120.0]] #in world
-    wright_rel = np.asarray([points_relative_point_heading(wright, reference_tank[0:2], reference_tank[2])])
-    wright_rel = (wright_rel/80.0) * scale + 42.0
-    cv2.fillPoly(img, wright_rel.astype(np.int32), wall_value)
-
-    wtop = [[-120.0, -120.0], [120.0, -120.0], [120.0, -40.0-border_allowance_global], [-120.0, -40.0-border_allowance_global]] #in world
-    wtop_rel = np.asarray([points_relative_point_heading(wtop, reference_tank[0:2], reference_tank[2])])
-    wtop_rel = (wtop_rel/80.0) * scale + 42.0
-    cv2.fillPoly(img, wtop_rel.astype(np.int32), wall_value)
-
-    wbot = [[-120.0, 40.0+border_allowance_global], [120.0, 40.0+border_allowance_global], [120.0, 120.0], [-120.0, 120.0]] #in world
-    wbot_rel = np.asarray([points_relative_point_heading(wbot, reference_tank[0:2], reference_tank[2])])
-    wbot_rel = (wbot_rel/80.0) * scale + 42.0
-    cv2.fillPoly(img, wbot_rel.astype(np.int32), wall_value)
-
+    img = np.zeros((IMG_SZ, IMG_SZ, 1), np.uint8)
 
     #draw tanks
     for td in tank_data:
 
         rel_x, rel_y = point_relative_point_heading([td[0],td[1]], reference_tank[0:2], reference_tank[2])
 
-        x = (rel_x/80.0) * scale + 42.0
-        y = (rel_y/80.0) * scale + 42.0
+        x = (rel_x/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+        y = (rel_y/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
         heading = td[2]
         health = td[3]
 
@@ -94,17 +70,72 @@ def draw_tanks_in_channel(tank_data, reference_tank):
 
         img = draw_arrow(img, x, y, rel_heading, health)
 
-
-
     return img
 
-def barriers_for_player(barriers,angle):
-    res = cv2.resize(np.squeeze(barriers[:,:,0]), dsize=(84,84), interpolation=cv2.INTER_CUBIC)
+def barriers_for_player(barriers, reference_tank):
 
-    return np.expand_dims(res,axis=2)
+    img = np.zeros((IMG_SZ, IMG_SZ, 1), np.uint8)
+
+    # constants
+    wall_value = 255
+    border_allowance_global = 2.0
+
+    unity32 = UNITY_SZ*1.5
+    unityhf = UNITY_SZ*0.5
+
+    #draw walls
+    wleft = [[-unity32, -unity32], [-unityhf-border_allowance_global, -unity32], [-unityhf-border_allowance_global, unity32], [-unity32, unity32]] #in world
+    wleft_rel = np.asarray([points_relative_point_heading(wleft, reference_tank[0:2], reference_tank[2])])
+    wleft_rel = (wleft_rel/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+    cv2.fillPoly(img, wleft_rel.astype(np.int32), wall_value)
+
+    wright = [[unityhf+border_allowance_global, -unity32], [unity32, -unity32], [unity32, unity32], [unityhf+border_allowance_global, unity32]] #in world
+    wright_rel = np.asarray([points_relative_point_heading(wright, reference_tank[0:2], reference_tank[2])])
+    wright_rel = (wright_rel/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+    cv2.fillPoly(img, wright_rel.astype(np.int32), wall_value)
+
+    wtop = [[-unity32, -unity32], [unity32, -unity32], [unity32, -unityhf-border_allowance_global], [-unity32, -unityhf-border_allowance_global]] #in world
+    wtop_rel = np.asarray([points_relative_point_heading(wtop, reference_tank[0:2], reference_tank[2])])
+    wtop_rel = (wtop_rel/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+    cv2.fillPoly(img, wtop_rel.astype(np.int32), wall_value)
+
+    wbot = [[-unity32, unityhf+border_allowance_global], [unity32, unityhf+border_allowance_global], [unity32, unity32], [-unity32, unity32]] #in world
+    wbot_rel = np.asarray([points_relative_point_heading(wbot, reference_tank[0:2], reference_tank[2])])
+    wbot_rel = (wbot_rel/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+    cv2.fillPoly(img, wbot_rel.astype(np.int32), wall_value)
+
+    #draw internal barriers
+    res = cv2.resize(np.squeeze(barriers[:,:,0]), dsize=(int(SCALE),int(SCALE)), interpolation=cv2.INTER_CUBIC)
+    #res = np.expand_dims(res,axis=2)
+
+    barrier_img = np.zeros((IMG_SZ, IMG_SZ), np.uint8)
+    scale_int_padd = IMG_SZ-int(SCALE)
+    barrier_img[(scale_int_padd//2):IMG_SZ-(scale_int_padd//2), (scale_int_padd//2):IMG_SZ-(scale_int_padd//2)] = res
+    barrier_img = np.flipud(barrier_img)
+
+    #translate
+    dx = (reference_tank[0]/UNITY_SZ) * SCALE
+    dy = (reference_tank[1]/UNITY_SZ) * SCALE
+    M = np.float32([[1,0,-dx],[0,1,-dy]])
+    barrier_img = cv2.warpAffine(barrier_img,M,(IMG_SZ,IMG_SZ))
+
+    #rotate about center
+    ang = reference_tank[2]*(180.0/3.14)
+    M = cv2.getRotationMatrix2D((float(IMG_SZ)*0.5,float(IMG_SZ)*0.5),ang,1)
+    barrier_img = cv2.warpAffine(barrier_img,M,(IMG_SZ,IMG_SZ))
+
+    #add channel
+    barrier_img = np.expand_dims(barrier_img, axis=2)
+
+    #concat the walls and the barriers
+    ch = np.maximum(img, barrier_img)
+
+    return ch
 # expects state data chopped on a tank by tank basis
 # ie. for 5 red, 5 blue, 2 neutral, expects a length 12 array
 def minimap_for_player(tank_data, tank_idx, barriers):
+
+    data = np.asarray(tank_data)
 
     my_data = tank_data[tank_idx]
 
@@ -125,7 +156,7 @@ def minimap_for_player(tank_data, tank_idx, barriers):
     neutral_channel = draw_tanks_in_channel(neutral, my_data)
     #barriers_channel = np.zeros((84, 84, 1), np.uint8)
     #barriers_channel[:80,:80,0] = barriers[:,:,0]
-    barriers_channel = barriers_for_player(barriers,my_data[2])
+    barriers_channel = barriers_for_player(barriers, my_data)
     #flip images for red team so they are on the correct side of the map from their POV
     # if flip:
     #     this_channel = np.fliplr(np.flipud(this_channel))
@@ -138,7 +169,7 @@ def minimap_for_player(tank_data, tank_idx, barriers):
     #print(image.shape)
     display_cvimage("tank"+str(tank_idx), np.transpose(image,(1,2,0)))
 
-    return np.asarray([ally_channel, enemy_channel, neutral_channel,barriers_channel]).astype(np.float32) / 255.0
+    return np.asarray([ally_channel, enemy_channel, neutral_channel, barriers_channel]).astype(np.float32) / 255.0
 
 
 def display_cvimage(window_name, img):
@@ -147,7 +178,7 @@ def display_cvimage(window_name, img):
     cv2.imshow(window_name,  img)
     cv2.waitKey(1)
 
-
+    time.sleep(2)
 
 
 

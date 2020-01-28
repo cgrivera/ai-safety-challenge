@@ -64,7 +64,7 @@ class TanksWorldFPVEnv(gym.Env):
         #for i in range(0,84,7):
         print('image shape ', np.array(self._env_info.visual_observations[1][0]).shape)
         #plt.imshow(np.array(self._env_info.visual_observations[1][0]))
-        state_reformat = [[state[i+0],state[i+1],state[i+2]/180*1.5707,state[i+3]] for i in range(0,84,7)]
+        state_reformat = [[state[i+0],state[i+1],state[i+2]/180*3.1415,state[i+3]] for i in range(0,84,7)]
         barriers = np.array(self._env_info.visual_observations[1][0])
         #print('state shape ',np.squeeze(np.array(minimap_for_player(state_reformat,3)).transpose((3,1,2,0))).shape)
         state_modified = [np.squeeze(np.array(minimap_for_player(state_reformat,i,barriers)).transpose((3,1,2,0))) for i in range(10)]
@@ -93,7 +93,7 @@ class TanksWorldFPVEnv(gym.Env):
         brain = self._env.brains[self._default_brain]
         #lets pretend that i'm tank at index 3 , this will have to be fixed later
         self._env_info = self._env.reset(train_mode=0, config=params)[self._default_brain]
-        self.observation_space = gym.spaces.box.Box(0,255,(84,84,4))
+        self.observation_space = gym.spaces.box.Box(0,255,(128,128,4))
         self.action_space = gym.spaces.box.Box(-1,1,(3,))
 
         state = self.get_state()
