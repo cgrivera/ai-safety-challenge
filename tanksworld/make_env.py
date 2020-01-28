@@ -3,4 +3,4 @@
 from tanksworld.env import TanksWorldFPVEnv
 
 def make_env():
-	return TanksWorldFPVEnv()
+	return TanksWorldFPVEnv(args.exe)

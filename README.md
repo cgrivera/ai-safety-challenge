@@ -1,18 +1,45 @@
 
 Home project for AI Arena's Tanks! challenge environment.
 
-### Installation
-These install instructions are for linux clients.  We recommend installing anaconda distribution of python.
+### Installation Quick Start Guide
+These install instructions are for linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies
 
+Download the latest version of the TanksWorld executable from the cooler page, unzip, and make the file executable.  https://cooler.jhuapl.edu/file/group/354691/all
 ```` sh
-conda
+https://cooler.jhuapl.edu/serve-file/e1580171309/l1580164104/da/c1/qty87IAnTo2U0FUU8-_GD715POaKi4WFbL40PjobH5E/260000/260137/file/1580164104aisafetytanks_0.1.2.zip
+unzip 1580164104aisafetytanks_0.1.2.zip
+chmod -R 755 aisafetytanks
+````
+
+Create a project conda environment and install some requirements
+````sh
+conda create -n aisafety python=3.6
+conda activate aisafety
+conda install -c conda-forge tensorflow=1.14.0 mpi4py
+pip install mlagents==0.9.3 stable_baselines
+````
+
+Clone the ai safety challenge and the AI arena repo and install.
+```` sh
+git clone https://gitlab.jhuapl.edu/rivercg1/ai-safety-challenge.git
+git clone https://gitlab.jhuapl.edu/staleew1/ai-arena-v5.git
+pip install -e ai-safety-challenge/
+pip install -e ai-arena-v5/
+````
+
+Go into the tankworld folder and run the main script with mpi.  The -n flag indicates the number of processes that will run simultaneously. 
+ - exe is the absolute path to the latest tanksworld executable
+ - logdir is the location that logfiles, saved policies, and performance plots will be saved.
+ - n is the number of processes, if you add enough processes, additional environments will be run
+```` sh
+cd ai-safety-challenge/tanksworld
+mpirun -n 13 --oversubscribe python my_main_script.py --exe /absolute/path/to/the/executable --logdir testrun
 ````
 
 
-mlagents==0.9.3
-Create a conda Environment
 
 
+## TanksWorld Details
 
 ### Game Controller -> Key Code
 Note that the joysticks and d-pad of the game controller are not "keys" and so have no keycode (that I know of).
