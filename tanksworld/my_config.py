@@ -5,15 +5,15 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description='AI Safety TanksWorld')
-parser.add_argument('--logdir',help='the  location of saved policys and logs')
+parser.add_argument('--logdir',help='the location of saved policys and logs')
 parser.add_argument('--exe', help='the absolute path of the tanksworld executable')
 args = parser.parse_args()
 
 # Tell the arena where it can put log files that describe the results of
 # specific policies.  This is also used to pass results between root processes.
 
-LOG_COMMS_DIR = os.path.join(os.getcwd(),"/logs/",args.logdir,"/")
-os.makedirs(LOG_COMMS_DIR, exist_ok=True)
+LOG_COMMS_DIR = "logs/"+args.logdir
+#os.makedirs(LOG_COMMS_DIR, exist_ok=True)
 
 # Define where to find the environment
 # if make_env is in this directory, os.getcwd() will suffice

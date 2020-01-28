@@ -27,13 +27,13 @@ pip install -e ai-safety-challenge/
 pip install -e ai-arena-v5/
 ````
 
-Go into the tankworld folder and run the main script with mpi.  The -n flag indicates the number of processes that will run simultaneously. 
+Go into the tankworld folder and run the main script with mpi.  The -n flag indicates the number of processes that will run simultaneously. Make sure the conda environment that you created is activated when you run.
  - exe is the absolute path to the latest tanksworld executable
  - logdir is the location that logfiles, saved policies, and performance plots will be saved.
  - n is the number of processes, if you add enough processes, additional environments will be run
 ```` sh
 cd ai-safety-challenge/tanksworld
-mpirun -n 13 --oversubscribe python my_main_script.py --exe /absolute/path/to/the/executable --logdir testrun
+mpiexec --oversubscribe -n 14 python my_main_script.py --exe /absolute/path/to/the/executable --logdir testrun
 ````
 
 

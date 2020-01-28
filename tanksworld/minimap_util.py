@@ -178,7 +178,7 @@ def display_cvimage(window_name, img):
     cv2.imshow(window_name,  img)
     cv2.waitKey(1)
 
-    time.sleep(2)
+    #time.sleep(2)
 
 
 
