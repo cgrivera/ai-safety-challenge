@@ -8,14 +8,15 @@ from arena5.core.stems import *
 from arena5.core.utils import mpi_print
 from arena5.core.policy_record import *
 import argparse
-import my_config as cfg
+
 
 
 parser = argparse.ArgumentParser(description='AI Safety TanksWorld')
 parser.add_argument('--logdir',help='the  location of saved policys and logs')
 parser.add_argument('--exe', help='the absolute path of the tanksworld executable')
 args = parser.parse_args()
-print(args.indir)
+
+import my_config as cfg
 
 arena = make_stem(cfg.MAKE_ENV_LOCATION, cfg.LOG_COMMS_DIR, cfg.OBS_SPACES, cfg.ACT_SPACES)
 
