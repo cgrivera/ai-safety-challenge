@@ -4,7 +4,7 @@ import numpy as np
 import math, random, time
 
 IMG_SZ = 128         #how big is the output image
-UNITY_SZ = 80.0     #what is the side length of the space in unity coordintaes
+UNITY_SZ = 100.0     #what is the side length of the space in unity coordintaes
 SCALE = 120.0        #what is the side length of the space when drawn on our image
 
 def point_offset_point(p_origin, angle, radius):
@@ -36,12 +36,12 @@ def points_relative_point_heading(points, new_origin, heading):
 def draw_arrow(image, x, y, heading, health):
 
     #value of the tank is how much hp it has
-    arrow_size = 2.0
+    arrow_size = 3.0
     angle_dev = 2.0
     value = int((health/100.0)*128.0 + 127.0)
 
     #make verticies of an asteroid-like arrow shape
-    h = heading + 1.57
+    h = heading - 1.57
     pnose = point_offset_point([x, y], h, 2.0*arrow_size)
     pleft = point_offset_point([x, y], h-angle_dev, arrow_size)
     porg = [x, y]
@@ -58,6 +58,9 @@ def draw_tanks_in_channel(tank_data, reference_tank):
 
     #draw tanks
     for td in tank_data:
+
+        if td[3] <= 0.0:
+            continue
 
         rel_x, rel_y = point_relative_point_heading([td[0],td[1]], reference_tank[0:2], reference_tank[2])
 
@@ -78,7 +81,7 @@ def barriers_for_player(barriers, reference_tank):
 
     # constants
     wall_value = 255
-    border_allowance_global = 2.0
+    border_allowance_global = 0.0
 
     unity32 = UNITY_SZ*1.5
     unityhf = UNITY_SZ*0.5
@@ -133,11 +136,19 @@ def barriers_for_player(barriers, reference_tank):
     return ch
 # expects state data chopped on a tank by tank basis
 # ie. for 5 red, 5 blue, 2 neutral, expects a length 12 array
-def minimap_for_player(tank_data, tank_idx, barriers):
+def minimap_for_player(tank_data_original, tank_idx, barriers):
 
-    data = np.asarray(tank_data)
+    barriers = np.flipud(barriers)
+
+    tank_data = []
+    for td in tank_data_original:
+        tank_data.append([td[0], -td[1], td[2], td[3]])
 
     my_data = tank_data[tank_idx]
+
+    if my_data[3] <= 0.0:
+        #display_cvimage("tank"+str(tank_idx), np.zeros((IMG_SZ, IMG_SZ, 3)))
+        return np.zeros((IMG_SZ,IMG_SZ,4), dtype=np.float32)
 
     if tank_idx < 5:
         ally = tank_data[:5]
@@ -166,11 +177,14 @@ def minimap_for_player(tank_data, tank_idx, barriers):
 
     image = np.asarray([ally_channel, enemy_channel, barriers_channel]).astype(np.float32)
     image = np.squeeze(image)
+
     #print(image.shape)
-    display_cvimage("tank"+str(tank_idx), np.transpose(image,(1,2,0)))
+    #display_cvimage("tank"+str(tank_idx), np.transpose(image,(1,2,0)))
 
-    return np.asarray([ally_channel, enemy_channel, neutral_channel, barriers_channel]).astype(np.float32) / 255.0
+    ret = np.asarray([ally_channel, enemy_channel, neutral_channel, barriers_channel]).astype(np.float32) / 255.0
 
+    ret = np.squeeze(np.array(ret).transpose((3,1,2,0)))
+    return ret
 
 def display_cvimage(window_name, img):
 
@@ -178,7 +192,7 @@ def display_cvimage(window_name, img):
     cv2.imshow(window_name,  img)
     cv2.waitKey(1)
 
-    #time.sleep(2)
+    #time.sleep(0.2)
 
 
 
@@ -187,28 +201,35 @@ if __name__ == "__main__":
     # 12 random tanks
     tank_data = []
     for i in range(12):
-        x = random.uniform(-40, 40)
-        y = random.uniform(-40, 40)
-        h = random.uniform(-3.14, 3.14)
-        hp = random.uniform(0.0, 100.0)
+        x = 500
+        y = 500
+        h = 0
+        hp = 100.0
         tank_data.append([x, y, h, hp])
+
+    #ally
+    tank_data[0] = [-15,15,0,100]
+    tank_data[1] = [15,20,0,100]
+    tank_data[5] = [-15,-15,3.14,100]
+    tank_data[6] = [15,-20,3.14,100]
+
+    no_barriers = np.zeros((40,40,1))
 
 
     for i in range(1000):
 
-        tank_data[2][2] += 0.1
+        tank_data[0][2] += 0.1
+        # tank_data[1][2] -= 0.1
 
         # get image for tank 2
-        minimap = minimap_for_player(tank_data, 2)
+        minimap0 = minimap_for_player(tank_data, 0, no_barriers)
+        minimap1 = minimap_for_player(tank_data, 1, no_barriers)
+        minimap6 = minimap_for_player(tank_data, 5, no_barriers)
+        minimap6 = minimap_for_player(tank_data, 6, no_barriers)
 
         #display the channels
-        display_cvimage("allies2", minimap[1])
-
-        # get image for tank 3
-        minimap = minimap_for_player(tank_data, 3)
-
-        #display the channels
-        display_cvimage("allies3", minimap[1])
+        # display_cvimage("allies2", minimap0[1])
+        # display_cvimage("allies3", minimap1[1])
 
         #pause for a few seconds so we can view the images
-        time.sleep(0.1)
+        time.sleep(0.2)

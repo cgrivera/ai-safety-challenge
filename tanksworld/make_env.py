@@ -1,7 +1,7 @@
 
 
-from tanksworld.env import TanksWorldFPVEnv
+from tanksworld.env import TanksWorldStackedEnv
 import my_config as cfg
 
 def make_env():
-	return TanksWorldFPVEnv(cfg.args.exe)
+	return TanksWorldStackedEnv(cfg.args.exe)

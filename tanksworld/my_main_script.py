@@ -11,10 +11,7 @@ import argparse
 
 
 
-parser = argparse.ArgumentParser(description='AI Safety TanksWorld')
-parser.add_argument('--logdir',help='the  location of saved policys and logs')
-parser.add_argument('--exe', help='the absolute path of the tanksworld executable')
-args = parser.parse_args()
+
 
 import my_config as cfg
 
@@ -23,11 +20,11 @@ arena = make_stem(cfg.MAKE_ENV_LOCATION, cfg.LOG_COMMS_DIR, cfg.OBS_SPACES, cfg.
 # --- only the root process will get beyond this point ---
 
 #this is a list of assignments of entity <---> policy
-match_list = [[1,1,1,1,1,1,1,1,1,1]]
+match_list = [[1,1,1,1,1,2,2,2,2,2]]
 
 #for each policy above, what type of policy is it
 #you can specify a string name or TODO: a path to a custom algo
-policy_types = {1:"ppo"}
+policy_types = {1:"ppo",2:"random"}
 
 #train with this configuration
 while True:
