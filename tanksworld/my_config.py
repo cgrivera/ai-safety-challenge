@@ -25,5 +25,5 @@ MAKE_ENV_LOCATION = os.getcwd()
 
 #temp = make_env()
 
-OBS_SPACES = [gym.spaces.box.Box(0,255,(128,128,12))]*10
+OBS_SPACES = [gym.spaces.box.Box(0,255,(128,128,4))]*10
 ACT_SPACES = [gym.spaces.box.Box(-1,1,(3,))]*10
