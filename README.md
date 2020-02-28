@@ -77,6 +77,19 @@ The two teams always start a match on opposite sides of the arena facing one ano
 Each tank can drive and shoot. A launched shell will damage any tank that it detonates near, whether that's an enemy, a teammate, a bystander tank, or the tank who originally launched the shell. 
 Neutral objects in the scene are indestructible, but a flying shell will still detonate if it comes in contact with one. 
 
+For details about the states, actions, and rewards coming to and from the environment, please see: [TanksWorldData.md](./TanksWorldData.md)
+
+
+## AI Arena
+
+The example code provided uses the AI Arena to interface with the TanksWorld environment and manage AI training.  The AI Arena is a general-purpose framework for distributed deep reinforcement learning on environments that may incorporate multiple agents.  For documentation on this framework, please see the AI Arena repo on gitlab: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5
+
+In particular, look at the documentation located at: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/docs
+
+Included in the AI Arena are examples of using PPO (which is used in the example here) and also for using custom algorithms, which may be helpful to you if you want full control over the learning process.  The example of a custom policy can be found here: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/examples/custom_policy_random_agent
+
+
+## Underlying Unity Simulation
 
 ### The following concerns the unity environment, not the provided gym environment
 TODO: log the differrences between these sims
