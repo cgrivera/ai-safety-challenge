@@ -34,8 +34,7 @@ You should now see "(base)" on the far left of your terminal prompt, indicating 
 #### TanksWorld and Dependencies
 Download the latest version of the TanksWorld executable from the cooler page, unzip, and make the file executable.  https://cooler.jhuapl.edu/file/group/354691/all
 ```` sh
-https://cooler.jhuapl.edu/serve-file/e1580171309/l1580164104/da/c1/qty87IAnTo2U0FUU8-_GD715POaKi4WFbL40PjobH5E/260000/260137/file/1580164104aisafetytanks_0.1.2.zip
-unzip 1580164104aisafetytanks_0.1.2.zip
+unzip <latest_aisafety_build.zip>
 chmod -R 755 aisafetytanks
 ````
 
