@@ -76,7 +76,7 @@ class TanksWorldEnv(gym.Env):
         if not TanksWorldEnv._env:
             try:
                 print('WARNING: seed not set, using default')
-                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234)
+                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234,timeout_wait=500)
                 print('finished initializing environment')
                 TanksWorldEnv._env_params['filename'] = self._filename
                 TanksWorldEnv._env_params['workerid'] = self._workerid
@@ -182,7 +182,7 @@ class TanksWorldStackedEnv(TanksWorldEnv):
         if not TanksWorldStackedEnv._env:
             try:
                 print('WARNING: seed not set, using default')
-                TanksWorldStackedEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234)
+                TanksWorldStackedEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234,timeout_wait=500)
                 print('finished initializing environment')
                 TanksWorldStackedEnv._env_params['filename'] = self._filename
                 TanksWorldStackedEnv._env_params['workerid'] = self._workerid
