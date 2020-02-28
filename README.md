@@ -1,5 +1,6 @@
 
 Home project for AI Arena's Tanks! challenge environment.
+Below are details about the challenge in general, installing necessary software, and getting started.  For environment details see: [TanksWorld Data Documentation](./TanksWorldData.md) For rules and evaluation see: [TODO_EVALUATION_SCHEME_DOCS](./Evaluation.md)
 
 ### Installation Quick Start Guide
 These install instructions are for Linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies.
