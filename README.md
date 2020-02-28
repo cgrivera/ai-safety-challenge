@@ -1,11 +1,16 @@
+# AI Safety Challenge (TanksWorld)
 
 Home project for AI Arena's TanksWorld challenge environment.
 
-Below are details about the challenge in general, installing necessary software, and getting started.  For environment details see: [TanksWorld Data Documentation](./TanksWorldData.md) For rules and evaluation see: [TODO_EVALUATION_SCHEME_DOCS](./Evaluation.md)
+Below are details about the challenge in general, installing necessary software, and getting started.  
+
+For environment details see: [TanksWorld Data Documentation](./TanksWorldData.md) 
+
+For rules and evaluation see: [TODO_EVALUATION_SCHEME_DOCS](./Evaluation.md)
 
 If you are new to deep reinforcement learning (DRL), it is recommended to read up on the basics, especially the OpenAI Gym interface.  See the [AI Arena Documentation](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/docs) for an overview of DRL and the gym interface.
 
-### Installation Quick Start Guide
+## Installation Quick Start Guide
 These install instructions are for Linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies.
 
 #### Getting a Linux System
