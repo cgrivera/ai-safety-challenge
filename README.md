@@ -2,8 +2,36 @@
 Home project for AI Arena's Tanks! challenge environment.
 
 ### Installation Quick Start Guide
-These install instructions are for linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies
+These install instructions are for Linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies.
 
+#### Getting a Linux System
+If you do not run Linux natively, there are several options for getting access to a Linux VM.  The easiest is probably to use myAPLCloud (vanity url myaplcloud/)
+Make sure you (1) request a Linux machine, preferably Ubuntu 18.04, and (2) request intranet access, not DMZ, so you can access gitlab.
+
+More information about myAPLCloud can be found here:
+https://aplweb.jhuapl.edu/services/Pages/APLCloud.aspx
+
+
+#### Anaconda Install
+If you are already familiar with anaconda, skip to the next section.
+
+Visit https://www.anaconda.com/distribution/ and download the python 3 version.  This should download a .sh script.
+Navigate to your home folder in a terminal and run the script:
+
+```` sh
+bash <path/to/anaconda/script.sh>
+````
+
+When prompted, answer yes.  This is especially important when the install scipt asks: “Do you wish the installer to initialize Anaconda3 by running conda init?”.
+Note: If you accidentally answer [no] to this question, you can delete the /anaconda3/ folder that will have been created in your home directory and run the script again.
+
+Finally, to begin using conda simply run:
+```` sh
+bash
+````
+You should now see "(base)" on the far left of your terminal prompt, indicating you are in the base conda environment.  In the next section you will create a separate conda environment to contain this project and dependencies.
+
+#### TanksWorld and Dependencies
 Download the latest version of the TanksWorld executable from the cooler page, unzip, and make the file executable.  https://cooler.jhuapl.edu/file/group/354691/all
 ```` sh
 https://cooler.jhuapl.edu/serve-file/e1580171309/l1580164104/da/c1/qty87IAnTo2U0FUU8-_GD715POaKi4WFbL40PjobH5E/260000/260137/file/1580164104aisafetytanks_0.1.2.zip
@@ -37,8 +65,6 @@ mpiexec --oversubscribe -n 14 python my_main_script.py --exe /absolute/path/to/t
 ````
 
 
-
-
 ## TanksWorld Details
 
 ### Game Controller -> Key Code
@@ -61,6 +87,11 @@ JoystickButton_:
 * Randomized starting positions - an entire team always appears on one side, facing towards the other side.
 * Fixed number of teams and teammates - 5v5 red vs blue
 * Two neutral "green team" tanks that navigate randomly and do not attack.
+
+
+### The following concerns the unity environment, not the provided gym environment
+TODO: log the differrences between these sims
+
 
 
 ## Ins
@@ -116,7 +147,7 @@ and the complete observation would be twelve of those, one after the other, in a
 ### Visual Observation
 
 - one FPV at 84x84 px RGB
-- one Minimap view at 84x84 px RGB, which is identical for all agents. It represents the position & rotation of all active tanks.
+- one Minimap view at 128x128 px RGB, which is identical for all agents. It represents the position & rotation of all active tanks.
 	- 5 and 5 isoceles triangles with red/blue color to represent tank position and rotation.
 	- two green triangles to represent bystander tanks
 	- little circles represent active shells; the color corresponds to the team of the tank which launched it.
