@@ -91,12 +91,12 @@ Included in the AI Arena are examples of using PPO (which is used in the example
 
 ## Underlying Unity Simulation
 
-### The following concerns the unity environment, not the provided gym environment
-TODO: log the differrences between these sims
+### NOTE: The rest of this document concerns the unity environment, not the provided gym environment
 
-## Inputs
 
-### Vector action
+### Inputs
+
+#### Vector action
 
 float array of length 3; each value has a range range of `[-1,  1]`:
 
@@ -106,19 +106,19 @@ float array of length 3; each value has a range range of `[-1,  1]`:
 
 Note that out-of-range values are allowed, but will be internally clamped to the `[-1, 1]` range.
 
-### Decision Interval
+#### Decision Interval
 
 The decision interval for the tanks is every 6 steps. This means a learner can only choose an action every 6 steps, and for the steps between decisions, the last known action is applied each time. If a decision is to turn left, it will continue turning left for the next 6 steps. 
 
 The vector observation is sent every 6 steps too. Between decisions, nothing new is sent.
 
-### Reset parameters
+#### Reset parameters
 
 None for now!
 
-## Outputs
+### Outputs
 
-### Vector Observation
+#### Vector Observation
 
 float array of length 84
 
@@ -142,7 +142,7 @@ e.g. the state of a given tank at the start of the game might look like `[30, 20
 
 and the complete observation would be twelve of those, one after the other, in an array of 84 total floats.
 
-### Visual Observation
+#### Visual Observation
 
 - one FPV at 84x84 px RGB, unique per agent
 - one Minimap view at 128x128 px RGB, which is identical for all agents. It represents the coverage of static obstacles in the scene, including the bounding walls. 
@@ -150,7 +150,7 @@ For any pixel that is white in the observation, the corresponding location in th
 Black pixels indicate that there is no static obstacle at that spot.
 	- This view ignores all tanks.
 
-### Game window
+#### Game window
 
 The executable brings up a game window during training with multiple views. 
 
@@ -162,7 +162,7 @@ Red triangles indicate red team; Blue triangles are Blue team; Green triangles a
 
 A scoreboard appears over the cinematic view. It depicts the number of friendly, enemy, and collateral kills that each team has collectively performed. On the left is Red's scores, and Blue's are on the right.
 
-## Physics overview
+### Physics overview
 
 Both the tanks and the launched shells are represented by non-kinematic Rigidbodies in Unity's physics system. The bystander tanks are kinematic rigidbodies - a necessary feature of NavMesh controlled actors. 
 
@@ -176,7 +176,7 @@ Shells always launch at 50 m/s from the front of the tank. They follow an arc th
 
 Tanks can move at a maximum of 20 m/s forward or backward. If a shell explosion occurs near a tank, it can be pushed away by the explosion force and for the duration its inputs will have no effect. 
 
-### Object dimensions
+#### Object dimensions
 
 All dimensions are in length/width/height format, or front-back, left-right, bottom-top size. All in meters. Dimensions are based on the object's collider used for physics interactions, not necessarily the visible mesh.
 
@@ -191,20 +191,20 @@ Palm Tree (trunk only) | 1.0 | 1.0 | 4.0
 Wall | 3.0 | 1.0 | 3.0
 Bunker | 7.13 | 4.15 | 2.84
 
-## Human runtime interactions
+### Human runtime interactions
 
 Plug in a game controller while running the environment in inference mode to override Red Tank 1's inputs with controller inputs. The controller is successfully detected when the top-left FPV is surrounded in a red border and a "PLAYER 1" label appears at the top of the view. 
 
 To relinquish control back to the policy, unplug the controller.
 
-### Controls
+#### Controls
 
 * Move forward: right trigger
 * Move backward: left trigger
 * Turn left/right: move left thumbstick left or right
 * Shoot: press "A" on an XBOX-like controller.
 
-### Debug
+#### Debug
 
 If the controller is not detected, try unplugging and re-plugging it in while running the environment so Unity can detect the hardware change. Ensure that it is running in inference mode - the controller will not override while in training mode.
 
