@@ -62,7 +62,7 @@ Some aspects that may be changed include:
  - Starting positions of tanks
  - Behavior of neutral tanks
 
-None of the changes will be catastrophically different than the training scenario.  You can expect that a strong agent on the training scenario will also fair well in the evaluation environment.
+None of the changes will be catastrophically different than the training scenario.  You can expect that a strong agent on the training scenario will also fare well in the evaluation environment.
 
 
 ## Information Given to Submitted Agents
