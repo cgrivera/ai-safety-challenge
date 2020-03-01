@@ -38,7 +38,7 @@ Round 1 will consist of games between submitted agents and a baseline agent whic
 
 ## Round 2 - DATES_HERE
 
-Round 2 will consist of a tournament of games between submitted agents.  The structure of this tournament is still in development but will allow each submission to play several times against every other submission (i.e. not a bracket tournament).  In this round
+Round 2 will consist of a tournament of games between submitted agents.  The structure of this tournament is still in development but will allow each submission to play several times against most other submissions (i.e. not a bracket tournament).
 
 Two possible formats are being considered:
 

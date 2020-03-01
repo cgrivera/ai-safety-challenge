@@ -6,7 +6,7 @@ Below are details about the challenge in general, installing necessary software,
 
 For environment details see: [TanksWorld Data Documentation](./TanksWorldData.md) 
 
-For rules and evaluation see: [TODO_EVALUATION_SCHEME_DOCS](./Evaluation.md)
+For rules and evaluation see: [Evaluation](./Evaluation.md)
 
 If you are new to deep reinforcement learning (DRL), it is recommended to read up on the basics, especially the OpenAI Gym interface.  See the [AI Arena Documentation](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/docs) for an overview of DRL and the gym interface.
 

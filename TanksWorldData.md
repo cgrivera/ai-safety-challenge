@@ -59,7 +59,7 @@ These 3 behaviors are combined and executed simultaneously.  For example:
 ## Reward scheme
 
 The goal of any reinforcement learning agent is to maximize the rewards over time.  This should be your goal as well.
-However, the reward scheme during evaluation will differ slightly from the scheme provided below to test the robustness of your agent.  The difference between training and testing will be described in: [TODO_EVALUATION_SCHEME_DOCS](./Evaluation.md)
+However, the reward scheme during evaluation will differ slightly from the scheme provided below to test the robustness of your agent.  The difference between training and testing will be described in: [Evaluation](./Evaluation.md)
 
 The reward for each tank is proportional to any damage it causes.  Numerically, this reward is the fraction of a tank's total health that is deducted.  For a neutral tank, ally tank, or your own tank, this is a penalty.  For Enemy tanks, this is a reward.
 
