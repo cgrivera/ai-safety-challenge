@@ -52,6 +52,10 @@ def draw_arrow(image, x, y, heading, health):
     cv2.fillPoly(image, verts, value)
     return image
 
+def draw_bullet(image, x, y):
+    cv2.circle(image, (int(x),int(y)), 2, 255.0, thickness=1)
+    return image
+
 def draw_tanks_in_channel(tank_data, reference_tank):
 
     img = np.zeros((IMG_SZ, IMG_SZ, 1), np.uint8)
@@ -73,6 +77,17 @@ def draw_tanks_in_channel(tank_data, reference_tank):
 
         img = draw_arrow(img, x, y, rel_heading, health)
 
+        # draw bullet if present
+        if len(td) > 4:
+            bx = td[4]
+            by = td[5]
+
+            if bx < 900:
+                rel_x, rel_y = point_relative_point_heading([bx, by], reference_tank[0:2], reference_tank[2])
+                x = (rel_x/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+                y = (rel_y/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
+                img = draw_bullet(img, x, y)
+
     return img
 
 def barriers_for_player(barriers, reference_tank):
@@ -81,7 +96,7 @@ def barriers_for_player(barriers, reference_tank):
 
     # constants
     wall_value = 255
-    border_allowance_global = 0.0
+    border_allowance_global = -1.0
 
     unity32 = UNITY_SZ*1.5
     unityhf = UNITY_SZ*0.5
@@ -109,23 +124,29 @@ def barriers_for_player(barriers, reference_tank):
 
     #draw internal barriers
     res = cv2.resize(np.squeeze(barriers[:,:,0]), dsize=(int(SCALE),int(SCALE)), interpolation=cv2.INTER_CUBIC)
-    #res = np.expand_dims(res,axis=2)
+    threshold_indices = res > 0.05
+    res[threshold_indices] = 1.0
+    res *= 255.0
 
-    barrier_img = np.zeros((IMG_SZ, IMG_SZ), np.uint8)
-    scale_int_padd = IMG_SZ-int(SCALE)
-    barrier_img[(scale_int_padd//2):IMG_SZ-(scale_int_padd//2), (scale_int_padd//2):IMG_SZ-(scale_int_padd//2)] = res
-    barrier_img = np.flipud(barrier_img)
+    #draw in larger image
+    scl = int(SCALE)
+    barrier_img = np.ones((scl*2, scl*2), np.uint8)
+    barrier_img[(scl//2):3*scl//2, (scl//2):3*scl//2] = res
 
     #translate
     dx = (reference_tank[0]/UNITY_SZ) * SCALE
     dy = (reference_tank[1]/UNITY_SZ) * SCALE
     M = np.float32([[1,0,-dx],[0,1,-dy]])
-    barrier_img = cv2.warpAffine(barrier_img,M,(IMG_SZ,IMG_SZ))
+    barrier_img = cv2.warpAffine(barrier_img,M,(scl*2,scl*2))
 
     #rotate about center
     ang = reference_tank[2]*(180.0/3.14)
-    M = cv2.getRotationMatrix2D((float(IMG_SZ)*0.5,float(IMG_SZ)*0.5),ang,1)
-    barrier_img = cv2.warpAffine(barrier_img,M,(IMG_SZ,IMG_SZ))
+    M = cv2.getRotationMatrix2D((float(scl*2)*0.5,float(scl*2)*0.5),ang,1)
+    barrier_img = cv2.warpAffine(barrier_img,M,(scl*2,scl*2))
+
+    #extract central area without padding
+    padd = (IMG_SZ-int(SCALE))//2
+    barrier_img = barrier_img[(scl//2)-padd:(scl//2)+IMG_SZ-padd, (scl//2)-padd:(scl//2)+IMG_SZ-padd]
 
     #add channel
     barrier_img = np.expand_dims(barrier_img, axis=2)
@@ -142,7 +163,7 @@ def minimap_for_player(tank_data_original, tank_idx, barriers):
 
     tank_data = []
     for td in tank_data_original:
-        tank_data.append([td[0], -td[1], td[2], td[3]])
+        tank_data.append([td[0], -td[1], td[2], td[3], td[4], -td[5]])
 
     my_data = tank_data[tank_idx]
 
@@ -175,13 +196,13 @@ def minimap_for_player(tank_data_original, tank_idx, barriers):
     #     enemy_channel = np.fliplr(np.flipud(enemy_channel))
     #     neutral_channel = np.fliplr(np.flipud(neutral_channel))
 
-    image = np.asarray([ally_channel, enemy_channel, barriers_channel]).astype(np.float32)
-    image = np.squeeze(image)
+    # image = np.asarray([ally_channel, enemy_channel, barriers_channel]).astype(np.float32)
+    # image = np.squeeze(image)
 
     #print(image.shape)
     #display_cvimage("tank"+str(tank_idx), np.transpose(image,(1,2,0)))
 
-    ret = np.asarray([ally_channel, enemy_channel, neutral_channel, barriers_channel]).astype(np.float32) / 255.0
+    ret = np.asarray([ally_channel, neutral_channel, enemy_channel, barriers_channel]).astype(np.float32) / 255.0
 
     ret = np.squeeze(np.array(ret).transpose((3,1,2,0)))
     return ret
@@ -194,6 +215,19 @@ def display_cvimage(window_name, img):
 
     #time.sleep(0.2)
 
+
+def displayable_rgb_map(minimap):
+    ally = minimap[:,:,0]*255.0
+    neutral = minimap[:,:,1]*255.0
+    enemy = minimap[:,:,2]*255.0
+    barrier = minimap[:,:,3]*255.0
+
+    r_ch = np.maximum(ally, barrier)
+    g_ch = np.maximum(neutral, barrier)
+    b_ch = np.maximum(enemy, barrier)
+
+    ret = np.asarray([b_ch, g_ch, r_ch]).astype(np.uint8) #cv2 actually uses bgr
+    return ret.transpose((1,2,0))
 
 
 if __name__ == "__main__":

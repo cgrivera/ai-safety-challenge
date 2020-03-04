@@ -16,14 +16,15 @@
 #DAMAGES ARISING FROM THE USE OF, OR INABILITY TO USE, THE MATERIAL, INCLUDING,
 #BUT NOT LIMITED TO, ANY DAMAGES FOR LOST PROFITS.
 
-import sys
+import sys, time, random
 import gym
 from mlagents.envs import UnityEnvironment
 import os
 from mpi4py import MPI
 import numpy as np
 import matplotlib.pyplot as plt
-from minimap_util import minimap_for_player
+from minimap_util import minimap_for_player, displayable_rgb_map, display_cvimage
+import cv2
 #from .utils import get_l2explorer_worker_id, get_l2explorer_app_location
 
 # Enforce Python 3.6.x (the only version supported by Unity MLAgents)
@@ -36,6 +37,7 @@ class TanksWorldEnv(gym.Env):
     _env = None
     _env_params = {}
     _MAX_INT = 2147483647 #Max int for Unity ML Seed
+    _tank_data_len = 9
 
     @classmethod
     def close_env(cls):
@@ -46,7 +48,9 @@ class TanksWorldEnv(gym.Env):
         TanksWorldEnv._env_params = []
 
     #DO this in reset to allow seed to be set
-    def __init__(self,exe):
+    def __init__(self, exe, action_repeat=6, image_scale=128, timeout=500, friendly_fire=True, take_damage_penalty=True, kill_bonus=True, death_penalty=True,
+        static_tanks=[], random_tanks=[], disable_shooting=[], will_render=False):
+
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
         self._filename =  exe#'/home/rivercg1/projects/aisafety/build/aisafetytanks_0.1.2/TanksWorld.x86_64'
@@ -55,6 +59,31 @@ class TanksWorldEnv(gym.Env):
         self.action_space = gym.spaces.box.Box(-1,1,(3,))
         self.action_space = None
         self._seed = None
+
+        self.timeout = timeout
+        self.action_repeat=action_repeat  # repeat action this many times 
+        self.image_scale = image_scale    # scale the images going to the tanks (will be scaled from 128)
+        self.penalties = friendly_fire    # include negative rewards for friendly fire, neutral tanks, etc
+        self.take_damage_penalty = take_damage_penalty #penalize getting hit by someone else
+        self.kill_bonus = kill_bonus      # get bonus +1 for killing enemy (and -1 for ally if friendly fire on)
+        self.death_penalty = death_penalty # get penalty of -1.0 when killed
+
+        self.static_tanks = static_tanks
+        self.random_tanks = random_tanks
+        self.disable_shooting = disable_shooting
+        self.will_render = will_render
+
+        for s in static_tanks:
+            assert s not in random_tanks
+
+        self.training_tanks = []
+        for i in range(10):
+            if i not in self.static_tanks and i not in self.random_tanks:
+                self.training_tanks.append(i)
+
+        #load the obstaces image
+        self.barrier_img = cv2.imread('obstaclemap_fixed.png',1)
+
         self.reset(params={})
 
     def seed(self, val):
@@ -62,10 +91,24 @@ class TanksWorldEnv(gym.Env):
 
     def get_state(self):
         state = self._env_info.vector_observations[0]
-        state_reformat = [[state[i+0],state[i+1],state[i+2]/180*3.1415,state[i+3]] for i in range(0,84,7)]
-        barriers = np.array(self._env_info.visual_observations[1][0])
-        state_modified = [minimap_for_player(state_reformat,i,barriers) for i in range(10)]
-        return state_modified
+        state_reformat = []
+        for i in range(12):
+            j = i*TanksWorldEnv._tank_data_len
+            refmt = [state[j+0],state[j+1],state[j+2]/180*3.1415,state[j+3], state[j+7], state[j+8]]
+
+            state_reformat.append(refmt)
+
+        barriers = self.barrier_img/255.0  #np.array(self._env_info.visual_observations[1][0])
+
+        ret_states = [minimap_for_player(state_reformat,i,barriers) for i in self.training_tanks]
+
+        if self.will_render:
+            self.disp_states = [displayable_rgb_map(s) for s in ret_states]
+
+        if self.image_scale != 128:
+            ret_states = [cv2.resize(s, (self.image_scale, self.image_scale)) for s in ret_states]
+
+        return ret_states
 
     def reset(self,**kwargs):
         # Reset the environment
@@ -76,7 +119,7 @@ class TanksWorldEnv(gym.Env):
         if not TanksWorldEnv._env:
             try:
                 print('WARNING: seed not set, using default')
-                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234,timeout_wait=500)
+                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234)
                 print('finished initializing environment')
                 TanksWorldEnv._env_params['filename'] = self._filename
                 TanksWorldEnv._env_params['workerid'] = self._workerid
@@ -90,63 +133,116 @@ class TanksWorldEnv(gym.Env):
         brain = self._env.brains[self._default_brain]
         self._env_info = self._env.reset(train_mode=0, config=params)[self._default_brain]
 
+        self.previous_health = [100.0]*12
+
+        self.episode_steps = 0
 
         state = self.get_state()
 
         return state
 
     def is_done(self,state):
-        red_health = [3,10,17,24,31]
-        blue_health = [38,45,52,59,66]
+        red_health = [i*TanksWorldEnv._tank_data_len + 3 for i in range(5)]
+        blue_health = [(i+5)*TanksWorldEnv._tank_data_len + 3 for i in range(5)]
+        training_health = [i*TanksWorldEnv._tank_data_len + 3 for i in self.training_tanks]
 
         red_dead = [state[i]<=0 for i in red_health]
         blue_dead = [state[i]<=0 for i in blue_health]
+        training_dead = [state[i]<=0 for i in training_health]
 
-        if  all(red_dead) or all(blue_dead):
+        if  all(red_dead) or all(blue_dead) or all(training_dead) or self.episode_steps>self.timeout:
             return True
         return False
 
-    def objective(self,num):
-        state = self._env_info.vector_observations[0]
-        index = num*7
-        #tank was destroyed
-        if state[index+3]<=0 and num not in self.dead:
-            self.dead.append(num)
-            print("tank no ", num,' was destroyed')
-            return -0.0
-        #got a hit on the opposing team
-        if state[index+4]==1.0 and ((num<5 and state[index+6]==2.0) or (num>=5 and num<10 and state[index+5]==1.0)):
-            print("******************Got a hit!***********************")
-            print("tank no ", num,' state vector ', [state[index+i] for i in range(7)])
-            return 1.0
-        #friendly fire occured
-        if state[index+4]==1.0 and ((num<5 and state[index+6]==1.0) or (num>=5 and num<10 and state[index+5]==2.0)):
-            print("******************Friendly fire!***********************")
-            print("tank no ", num,' state vector ', [state[index+i] for i in range(7)])
-            return 0.0
-        return 0.0
+
+    def objectives(self):
+        health = [self._env_info.vector_observations[0][i*TanksWorldEnv._tank_data_len + 3] for i in range(12)]
+        delta_health = [self.previous_health[i]-health[i] for i in range(12)]
+
+        reward = [0.0]*10
+
+        for i in range(10):
+            state = self._env_info.vector_observations[0][i*TanksWorldEnv._tank_data_len:(i+1)*TanksWorldEnv._tank_data_len]
+            damage_dealt = state[5]/100.0
+            if state[4] == 1 and self.kill_bonus:
+                damage_dealt += 1.0
+            my_team = 1 if i<5 else 2
+            team_hit = state[6]
+
+            if team_hit > 0:
+                multiplier = 1.0 if team_hit != my_team else -1.0
+
+                #eliminate friendly fire penalties if required
+                if multiplier < 0 and not self.penalties:
+                    multiplier = 0.0
+
+                reward[i] += multiplier * damage_dealt
+
+            if delta_health[i] != 0.0:
+                if health[i] <= 0.0 and self.death_penalty:
+                    reward[i] -= 1.0
+                elif self.take_damage_penalty:
+                    reward[i] -= delta_health[i] / 100.0
+
+        self.previous_health = health
+        return [reward[i] for i in self.training_tanks]
+
 
     def step(self, action):
-        #render and get state as an image
-        action = np.array(action)
-        self._env_info = self._env.step(action)[self._default_brain]
 
-        self.state = self.get_state()
-        #self.reward  = self._env_info.rewards
-        self.reward = [self.objective(i) for i in range(10)]
-        self.done = self._env_info.local_done
-        info = [{}]*10
+        action = action[:]
 
-        #print('stepping ',self.reward,self.done)
-        #print('lengths ',len(self.state),len(self.reward),len(self.done),len(info))
-        #print('visual observation shapes ',self._env_info.vector_observations[0])
-        if np.any(self.reward):
-            print('reward ',self.reward)
-        return self.state, self.reward, self.is_done(self._env_info.vector_observations[0]), info
+        self.reward = [0.0]*len(self.training_tanks)
+
+        random_actions = []
+        for i in self.random_tanks:
+            random_actions.append([random.uniform(-1.0,1.0), random.uniform(-1.0,1.0), random.uniform(-1.0,1.0)])
+
+        for stp in range(self.action_repeat):
+            self.episode_steps += 1
+
+            #initialize to all static
+            new_action = []
+            for i in range(10):
+                new_action.append([0.0,0.0,0.0])
+
+            #sub in real actions for training tanks
+            for trainidx, totalidx in enumerate(self.training_tanks):
+                new_action[totalidx] = action[trainidx]
+
+            #sub in random actions for random tanks
+            for randidx, totalidx in enumerate(self.random_tanks):
+                new_action[totalidx] = random_actions[randidx]
+
+            #turn off shooting for any tanks with disabled shooting
+            for didx, totalidx in enumerate(self.disable_shooting):
+                new_action[totalidx][-1] = -1.0
+
+            #step
+            new_action = np.array(new_action)
+            self._env_info = self._env.step(new_action)[self._default_brain]
+
+            #get state
+            self.state = self.get_state()
+
+            #add rewards
+            new_rew = self.objectives()
+            for i in range(len(new_rew)):
+                self.reward[i] += new_rew[i]
+
+            #done
+            self.done = self._env_info.local_done[0]
+
+            if self.done:
+                break
+
+        info = [{}]*len(self.training_tanks)
+        return self.state, self.reward, self.done or self.is_done(self._env_info.vector_observations[0]), info
 
     def render(self):
-        '''Render by returning visual observation 1 for display'''
-        return self._env_info.visual_observations[0]
+        if self.will_render:
+            for idx,s in enumerate(self.disp_states):
+                display_cvimage("player_"+str(idx), s)
 
 
 
