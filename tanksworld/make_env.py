@@ -4,7 +4,9 @@ from tanksworld.env import TanksWorldEnv
 import my_config as cfg
 
 # example of passing in kwargs and using them
-def make_env(**kwargs):
+def make_env(friendly_fire=True, take_damage_penalty=True, kill_bonus=True, death_penalty=True,
+	static_tanks=[], random_tanks=[], disable_shooting=[], reward_weight=1.0, penalty_weight=1.0, **kwargs):
+
 	return TanksWorldEnv(cfg.args.exe,
 		action_repeat=6, 			# step between decisions, will be 6 in evaluation
 		image_scale=128,            # image size, will be 128 in evaluation
@@ -13,9 +15,11 @@ def make_env(**kwargs):
 		take_damage_penalty=True,   # do you get penalized for receiving damage (double counts w/ self-freindly-fire)
 		kill_bonus=True, 			# do you get +1 for killing enemy (-1 penalty for friendly fire kills if friendly fire is on)
 		death_penalty=True,			# do you get -1 for dying
-        static_tanks=kwargs["static_tanks"], 			# indices of tanks that do not move (not exposed externally, changes number of controllable players)
-        random_tanks=kwargs["random_tanks"],	# indices of tanks that move randomly (not exposed externally, changes number of controllable players)
-        disable_shooting=kwargs["disable_shooting"], 		# indices of tanks that cannot shoot (i.e. to allow random movement without shooting)
+        static_tanks=static_tanks, 			# indices of tanks that do not move (not exposed externally, changes number of controllable players)
+        random_tanks=random_tanks,	# indices of tanks that move randomly (not exposed externally, changes number of controllable players)
+        disable_shooting=disable_shooting, 		# indices of tanks that cannot shoot (i.e. to allow random movement without shooting)
+        reward_weight=reward_weight,
+        penalty_weight=penalty_weight,
         will_render=True)			# prepare rgb images for displaying when render() is called.  If not rendering turn off.
 
 		# NOTE: Make sure if you set static_tanks or random_tanks, or adjuist image_scale, that you make appropriate changes in my_config.py!!!

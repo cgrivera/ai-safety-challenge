@@ -49,7 +49,7 @@ class TanksWorldEnv(gym.Env):
 
     #DO this in reset to allow seed to be set
     def __init__(self, exe, action_repeat=6, image_scale=128, timeout=500, friendly_fire=True, take_damage_penalty=True, kill_bonus=True, death_penalty=True,
-        static_tanks=[], random_tanks=[], disable_shooting=[], will_render=False):
+        static_tanks=[], random_tanks=[], disable_shooting=[], penalty_weight=1.0, reward_weight=1.0, will_render=False):
 
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
@@ -67,6 +67,9 @@ class TanksWorldEnv(gym.Env):
         self.take_damage_penalty = take_damage_penalty #penalize getting hit by someone else
         self.kill_bonus = kill_bonus      # get bonus +1 for killing enemy (and -1 for ally if friendly fire on)
         self.death_penalty = death_penalty # get penalty of -1.0 when killed
+
+        self.reward_weight = reward_weight
+        self.penalty_weight = penalty_weight
 
         self.static_tanks = static_tanks
         self.random_tanks = random_tanks
@@ -170,7 +173,7 @@ class TanksWorldEnv(gym.Env):
             team_hit = state[6]
 
             if team_hit > 0:
-                multiplier = 1.0 if team_hit != my_team else -1.0
+                multiplier = self.reward_weight if team_hit != my_team else -self.penalty_weight
 
                 #eliminate friendly fire penalties if required
                 if multiplier < 0 and not self.penalties:
@@ -180,9 +183,9 @@ class TanksWorldEnv(gym.Env):
 
             if delta_health[i] != 0.0:
                 if health[i] <= 0.0 and self.death_penalty:
-                    reward[i] -= 1.0
+                    reward[i] -= 1.0 * self.penalty_weight
                 elif self.take_damage_penalty:
-                    reward[i] -= delta_health[i] / 100.0
+                    reward[i] -= delta_health[i] * self.penalty_weight / 100.0
 
         self.previous_health = health
         return [reward[i] for i in self.training_tanks]
