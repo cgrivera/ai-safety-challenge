@@ -23,3 +23,5 @@ def make_env(friendly_fire=True, take_damage_penalty=True, kill_bonus=True, deat
         will_render=True)			# prepare rgb images for displaying when render() is called.  If not rendering turn off.
 
 		# NOTE: Make sure if you set static_tanks or random_tanks, or adjuist image_scale, that you make appropriate changes in my_config.py!!!
+		# If you are making a curriculum that changes the number of tanks, you will probably need to keep all of them turned on and instead control them
+		# with a policy.
