@@ -11,10 +11,10 @@ def make_env(friendly_fire=True, take_damage_penalty=True, kill_bonus=True, deat
 		action_repeat=6, 			# step between decisions, will be 6 in evaluation
 		image_scale=128,            # image size, will be 128 in evaluation
 		timeout=500,				# maximum number of steps before episode forces a reset
-		friendly_fire=True, 		# do you get penalized for damaging self, allies, neutral
-		take_damage_penalty=True,   # do you get penalized for receiving damage (double counts w/ self-freindly-fire)
-		kill_bonus=True, 			# do you get +1 for killing enemy (-1 penalty for friendly fire kills if friendly fire is on)
-		death_penalty=True,			# do you get -1 for dying
+		friendly_fire=friendly_fire, 		# do you get penalized for damaging self, allies, neutral
+		take_damage_penalty=take_damage_penalty,   # do you get penalized for receiving damage (double counts w/ self-freindly-fire)
+		kill_bonus=kill_bonus, 			# do you get +1 for killing enemy (-1 penalty for friendly fire kills if friendly fire is on)
+		death_penalty=death_penalty,			# do you get -1 for dying
         static_tanks=static_tanks, 			# indices of tanks that do not move (not exposed externally, changes number of controllable players)
         random_tanks=random_tanks,	# indices of tanks that move randomly (not exposed externally, changes number of controllable players)
         disable_shooting=disable_shooting, 		# indices of tanks that cannot shoot (i.e. to allow random movement without shooting)
