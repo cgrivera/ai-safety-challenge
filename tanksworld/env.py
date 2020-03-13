@@ -173,7 +173,10 @@ class TanksWorldEnv(gym.Env):
             team_hit = state[6]
 
             if team_hit > 0:
-                multiplier = self.reward_weight if team_hit != my_team else -self.penalty_weight
+                if (my_team==1 and team_hit==2) or (my_team==2 and team_hit==1):
+                    multiplier = self.reward_weight
+                else:
+                    multiplier = -self.penalty_weight
 
                 #eliminate friendly fire penalties if required
                 if multiplier < 0 and not self.penalties:
