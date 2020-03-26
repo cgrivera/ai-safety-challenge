@@ -41,6 +41,30 @@ def get_actions(self, state):
 
 ````
 
+## Creating different behaviors for different members of your tanksworld team
+Because the tank_id is provided in the interface you can use that information to create different roles for different teammembers.  Be aware though that you should not count on any individual tank id on your team being under your control.  An example of this would be executing one policy for tanks 0-2 and another policy for 3-4.
+
+
+````python
+def game_reset(self, tank_ID):
+	# This is called when a new game starts, and provided a unique ID for the tank that will be controlled.  
+	# Use it if you needed it, otherwise just have it pass.
+	# No return value.
+  self.tank_id = tank_ID
+  self.policy_modelA = PolicyA()
+  self.policy_modelB = PolicyB()
+
+
+def get_actions(self, state):
+	# Given a tank's image state, reply with an action for that tank to take.
+	# returns: a list of three floats in range [-1.0, 1.0] which constitute a single action.
+  if self.tank_id < 3:
+    return self.policy_modelA(state)
+  else:
+    return self.policy_modelB(state)
+
+````
+
 
 ## Submissions control ONE tank, not a whole team
 
