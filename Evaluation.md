@@ -6,7 +6,7 @@ In all evaluations, a given submission will be used to control one team of 5 tan
 
 ### Note: A *game* is a single battle between two teams. A *match* is a series of games.
 
-## Detroying Enemy vs. Accumulated Reward
+## Destroying Enemy vs. Accumulated Reward
 
 All evaluations are scored based on the total accumulated reward of each team during the game.  This typically corresponds to the team with the most tanks left having the higher score.  However, it is technically possible to have a higher score than the other team while still losing more tanks:
 
