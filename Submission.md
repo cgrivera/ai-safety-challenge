@@ -10,7 +10,7 @@ Submitting a model for the AI Safety Challenge has its own rules and interface r
 
 
 ## Submissions are python 3 packages
-Special considerations are necessary to evaluate two submissions against each other (or one submission against a baseline), if the two submissions have different or conflicting software environments.  Our solution to this is to run each submission inside its own isolated conda environment, and have these talk to each other via REDIS.  This communication is not something you need to handle.  You should specify in your setup.py file which external python libraries you need, which will be pulled in when your submitted package is installed.
+Special considerations are necessary to evaluate two submissions against each other (or one submission against a baseline), if the two submissions have different or conflicting software environments.  Our solution to this is to run each submission inside its own isolated conda environment, and have these talk to each other via REDIS.  This communication is not something you need to handle.  You should specify in your setup.py file which external python libraries you need. They will be pulled in when your submitted package is installed.
 
 ![diagram](./conda_envs.png)
 
