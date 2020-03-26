@@ -1,3 +1,5 @@
+Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) | [AI Arena](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/)
+
 # Submission Format and Rules
 
 Submitting a model for the AI Safety Challenge has its own rules and interface requirements.  Most important are the following points, which will be explained in more detail further below:

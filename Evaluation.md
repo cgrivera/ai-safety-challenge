@@ -1,3 +1,5 @@
+Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) | [AI Arena](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/)
+
 # Evaluation
 
 In all evaluations, a given submission will be used to control one team of 5 tanks against an opposing team that is not in your control.  Games will be played until either one team is destroyed or the game runs for a maximum allowed time.  In the either case, the team which has accumulated the most reward during the game will be declared the winner.  In all evaluations, each team can only participate with one agent of their choosing.
