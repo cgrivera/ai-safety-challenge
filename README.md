@@ -79,7 +79,7 @@ or, if the above crashes due to not accepting the --oversubscribe flag:
 mpiexec -n 14 python my_main_script.py --exe <</absolute/path/to/the/executable>> --logdir testrun
 ````
 
-**Make sure you replace <<//absolute/path/to/the/executable>> with the executable location!**
+**Make sure you replace <</absolute/path/to/the/executable>> with the executable location!**
 
 
 ## TanksWorld Details
