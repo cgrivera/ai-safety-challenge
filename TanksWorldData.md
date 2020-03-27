@@ -30,7 +30,7 @@ The following arguments are available:
 - **penalty_weight:** *[float, default=1.0]* Scalar multiplier on any penalties (negative rewards) experienced
 - **will_render:** *[bool, default=True]* Whether extra RGB pictures should be prepared for human viewing
 
-* *CAUTION: These alter the number of agent that are being controlled externally.  Static and random agents are handled internally by the environment and will not be accessbile by external learning agents.  Please adjust NUM_LIVE_TANKS in my_config.py accordingly to specify the updated state and action sizes.*
+\* *CAUTION: These alter the number of agent that are being controlled externally.  Static and random agents are handled internally by the environment and will not be accessbile by external learning agents.  Please adjust NUM_LIVE_TANKS in my_config.py accordingly to specify the updated state and action sizes.*
 
 These arguments can either be edited within make_env.py or passed through arena.kickoff() with the env_kwargs keyword.  This is especially helpful if you wish to create training scripts that may vary environment parameters dynamically or over some schedule.
 
