@@ -26,5 +26,5 @@ policy_types = {1:"ppo"}
 kwargs_1 = {"static_tanks":[], "random_tanks":[5,6,7,8,9], "disable_shooting":[5,6,7,8,9]}
 
 # run each copy of the environment for 300k steps
-arena.kickoff(match_list, policy_types, 300000, scale=True, render=True, env_kwargs=kwargs_1)
+arena.kickoff(match_list, policy_types, 300000, scale=True, render=False, env_kwargs=kwargs_1)
 
