@@ -141,7 +141,22 @@ WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status
 Could not fetch URL https://pypi.org/simple/mlagents/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org', port=443): Max retries exceeded with url
 
 
-APL has a certificate that it wants staff to use.
+APL has a certificate that it wants staff to use. The solution is to register the certificate with conda and pip.  There are two options for conda.  Either disable ssl verification
+
+conda config --set ssl_verify false
+
+or
+
+Download the APL certificate.  Details are here https://aplweb.jhuapl.edu/services/IT%20Services%20Documents/Howto_Add_the_APL_Root_Certificate_to_Ubuntu.pdf
+And set the location of the certificate for conda in a command like this.
+
+conda config --set ssl_verify /the/path/to/the/apl/certificate.crt
+
+For pip, you may need to add the --cert flag to register the certificate. Put the approporate path to your certificate file in the command below.
+
+```` sh
+pip install --cert /path/to/the/certificate.crt mlagents==0.9.3 stable_baselines==2.9.0
+````
 
 
 ## Underlying Unity Simulation
