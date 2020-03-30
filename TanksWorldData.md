@@ -10,6 +10,31 @@ Unlike many single-player games for AI, the 5v5 nature of TanksWorld means it is
 
 Note that this is advanced usage and will require an understanding of the AI Arena multi-agent interface, which is slightly different than an OpenAI Gym interface.
 
+## Environment Arguments
+
+The latest version of the TanksWorld environment exposes many arguments to customize your environment for training.  You are welcome to further customize the scenario by editing the environment directly.  In either case, please note that your changes will be for training only and that separate arguments will be used during evaluation.
+
+The following arguments are available:
+
+- **action_repeat:** *[int, default=6]* Controls rate of interaction with the unity sim.
+- **image_scale:** *[int, default=128]* The side length of the imagery sent to each tank.
+- **timeout:** *[int, default=500]* Maximum number of steps before an environment is forced to reset.
+- **friendly_fire:** *[bool, default=True]* Whether to penalize for friendly fire (penality is proportional to damage)
+- **take_damage_penalty:** [bool, default=True]* Whether to penalize a tank for receiving damage
+- **kill_bonus:** *[bool default=True]* Whether to provide an additional reward for shots that kill an enemy (or penalty for friendly)
+- **death_penalty:** *[bool default=True]* Whether to penalize a tank additionally for being destroyed
+- **static_tanks:** *[list_of_ints, default=[]]* List of specific tanks (by index) that will be frozen and not move/shoot *
+- **random_tanks:** *[list_of_ints, default=[]]* List of specific tanks (by index) that will be act randomly *
+- **disable_shooting:** *[list_of_ints, default=[]]* List of specific tanks (by index) that will not execute shoot commands
+- **reward_weight:** *[float, default=1.0]* Scalar multiplier on any positive rewards experienced
+- **penalty_weight:** *[float, default=1.0]* Scalar multiplier on any penalties (negative rewards) experienced
+- **will_render:** *[bool, default=True]* Whether extra RGB pictures should be prepared for human viewing
+
+\* *CAUTION: These alter the number of agent that are being controlled externally.  Static and random agents are handled internally by the environment and will not be accessbile by external learning agents.  Please adjust NUM_LIVE_TANKS in my_config.py accordingly to specify the updated state and action sizes.*
+
+These arguments can either be edited within make_env.py or passed through arena.kickoff() with the env_kwargs keyword.  This is especially helpful if you wish to create training scripts that may vary environment parameters dynamically or over some schedule.
+
+
 ## Data flow for provided example
 
 In the provided example, the red team is controlled by 5 workers of the same PPO algorithm (all 5 players have copies of a common policy, and are contributing data to the policy).  The blue team is controlled by 5 workers implementing random actions.  The AI Arena manages the flow of data to and from the game environment on a step-by-step basis.  Each step, data is sent out to each worker corresponding to that worker's tank.  The worker responds with an action according to its policy.

@@ -19,7 +19,7 @@ These install instructions are for Linux clients.  We recommend installing the a
 
 #### Getting a Linux System
 If you do not run Linux natively, there are several options for getting access to a Linux VM.  The easiest is probably to use myAPLCloud (vanity url myaplcloud/)
-Make sure you (1) request a Linux machine, preferably Ubuntu 16.04, and (2) request intranet access, not DMZ, so you can access gitlab.
+Make sure you (1) request a Linux machine, preferably Ubuntu **16.04**, and (2) request intranet access, not DMZ, so you can access gitlab.
 
 More information about myAPLCloud can be found here:
 https://aplweb.jhuapl.edu/services/Pages/APLCloud.aspx
@@ -56,7 +56,7 @@ Create a project conda environment and install some requirements.
 conda create -n aisafety python=3.6
 conda activate aisafety
 conda install -c conda-forge tensorflow=1.14.0 mpi4py
-pip install mlagents==0.9.3 stable_baselines
+pip install mlagents==0.9.3 stable_baselines==2.9.0
 ````
 
 if you experience errors related to SSL certificates.  You will have to download the APL certificate at
@@ -82,8 +82,13 @@ Go into the tankworld folder and run the main script with mpi.  The -n flag indi
  - n is the number of processes, if you add enough processes, additional environments will be run
 ```` sh
 cd ai-safety-challenge/tanksworld
-mpiexec --oversubscribe -n 14 python my_main_script.py --exe /absolute/path/to/the/executable --logdir testrun
+mpiexec --oversubscribe -n 14 python my_main_script.py --exe <</absolute/path/to/the/executable>> --logdir testrun
+
+or, if the above crashes due to not accepting the --oversubscribe flag:
+mpiexec -n 14 python my_main_script.py --exe <</absolute/path/to/the/executable>> --logdir testrun
 ````
+
+**Make sure you replace <</absolute/path/to/the/executable>> with the executable location!**
 
 
 ## TanksWorld Details
