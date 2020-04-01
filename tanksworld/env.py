@@ -122,7 +122,7 @@ class TanksWorldEnv(gym.Env):
         if not TanksWorldEnv._env:
             try:
                 print('WARNING: seed not set, using default')
-                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234)
+                TanksWorldEnv._env = UnityEnvironment(file_name=self._filename, worker_id=self._workerid, seed=1234,timeout_wait=500)
                 print('finished initializing environment')
                 TanksWorldEnv._env_params['filename'] = self._filename
                 TanksWorldEnv._env_params['workerid'] = self._workerid
