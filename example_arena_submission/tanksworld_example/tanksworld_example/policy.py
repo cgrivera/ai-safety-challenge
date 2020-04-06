@@ -31,12 +31,4 @@ class Policy:
 
 	def get_actions(self, state):
 		action,_ = self.model.predict(state)
-		#print('state and action shape ',state.shape, action.shape)
-		#print(actions)
-		#assert len(states) == 5
-		#for s in states:
-		#assert s.shape == (128,128,4)
-
-		#return 5 random actions, each of length 3, in range [-1,1]
-		#print('taking action ',action)
 		return action
