@@ -1,7 +1,7 @@
 
 
 from tanksworld.env import TanksWorldEnv
-import my_config as cfg
+import tanksworld.my_config as cfg
 
 # example of passing in kwargs and using them
 def make_env(friendly_fire=True, take_damage_penalty=True, kill_bonus=True, death_penalty=True,

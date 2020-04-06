@@ -8,5 +8,5 @@ setup(
     author_email='edward.staley@jhuapl.edu',
     description='AI Safety Tanksworld Example Submission',
     packages=find_packages(),
-    install_requires=['numpy'],
+    install_requires=['numpy','stable_baselines==2.9.0','tensorflow==1.14.0'],
 )

@@ -1,5 +1,5 @@
 import os
-from make_env import make_env
+#from tanksworld.make_env import make_env
 import gym
 import os
 import argparse
@@ -7,6 +7,8 @@ import argparse
 parser = argparse.ArgumentParser(description='AI Safety TanksWorld')
 parser.add_argument('--logdir',help='the location of saved policys and logs')
 parser.add_argument('--exe', help='the absolute path of the tanksworld executable')
+parser.add_argument('--teamname1', help='the name for team 1')
+parser.add_argument('--teamname2', help='the name for team 2')
 args = parser.parse_args()
 
 # Tell the arena where it can put log files that describe the results of

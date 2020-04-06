@@ -8,5 +8,5 @@ setup(
     author_email='corban.rivera@jhuapl.edu',
     description='AI Safety Tanksworld',
     packages=find_packages(),
-    install_requires=['numpy','mlagents'],
+    install_requires=['numpy','mlagents==0.9.3'],
 )
