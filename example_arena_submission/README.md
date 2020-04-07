@@ -29,3 +29,6 @@ tanksworld_example <-- your submission zip file should include a single top leve
     │   ├── policy.py   <-- required, keep the name policy.py
     │   ├── ppo_save.zip  <-- this is an example saved weights file
 ````
+
+Submit your zip file at the AI Safety Challenge website.
+[https://challenges.jhuapl.edu/c/aisafety/](https://challenges.jhuapl.edu/c/aisafety/)
