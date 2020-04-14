@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tanksworld.minimap_util import minimap_for_player, displayable_rgb_map, display_cvimage
 import cv2
+import pathlib
 #from .utils import get_l2explorer_worker_id, get_l2explorer_app_location
 
 # Enforce Python 3.6.x (the only version supported by Unity MLAgents)
@@ -43,7 +44,7 @@ class TanksWorldEnv(gym.Env):
         self._seed = None
 
         self.timeout = timeout
-        self.action_repeat=action_repeat  # repeat action this many times 
+        self.action_repeat=action_repeat  # repeat action this many times
         self.image_scale = image_scale    # scale the images going to the tanks (will be scaled from 128)
         self.penalties = friendly_fire    # include negative rewards for friendly fire, neutral tanks, etc
         self.take_damage_penalty = take_damage_penalty #penalize getting hit by someone else
@@ -67,7 +68,8 @@ class TanksWorldEnv(gym.Env):
                 self.training_tanks.append(i)
 
         #load the obstaces image
-        self.barrier_img = cv2.imread('obstaclemap_fixed.png',1)
+        path = pathlib.Path(module.__file__).resolve().parent
+        self.barrier_img = cv2.imread(str(path)+'/obstaclemap_fixed.png',1)
 
         self.reset(params={})
 
