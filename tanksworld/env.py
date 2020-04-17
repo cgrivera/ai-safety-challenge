@@ -68,8 +68,8 @@ class TanksWorldEnv(gym.Env):
                 self.training_tanks.append(i)
 
         #load the obstaces image
-        path = pathlib.Path(module.__file__).resolve().parent
-        self.barrier_img = cv2.imread(str(path)+'/obstaclemap_fixed.png',1)
+        #path = pathlib.Path(module.__file__).resolve().parent
+        self.barrier_img = cv2.imread('./obstaclemap_fixed.png',1)
 
         self.reset(params={})
 
@@ -156,17 +156,19 @@ class TanksWorldEnv(gym.Env):
             my_team = 1 if i<5 else 2
             team_hit = state[6]
 
-            if team_hit > 0:
-                if (my_team==1 and team_hit==2) or (my_team==2 and team_hit==1):
-                    multiplier = self.reward_weight
-                else:
-                    multiplier = -self.penalty_weight
+            # if team_hit > 0:  [TED] I don't think this should have been here
 
-                #eliminate friendly fire penalties if required
-                if multiplier < 0 and not self.penalties:
-                    multiplier = 0.0
+            # was the damage dealth good or bad?
+            if (my_team==1 and team_hit==2) or (my_team==2 and team_hit==1):
+                multiplier = self.reward_weight
+            else:
+                multiplier = -self.penalty_weight
 
-                reward[i] += multiplier * damage_dealt
+            #eliminate friendly fire (and neutral) penalties if required
+            if multiplier < 0 and not self.penalties:
+                multiplier = 0.0
+
+            reward[i] += multiplier * damage_dealt
 
             if delta_health[i] != 0.0:
                 if health[i] <= 0.0 and self.death_penalty:
