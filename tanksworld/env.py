@@ -156,7 +156,7 @@ class TanksWorldEnv(gym.Env):
             my_team = 1 if i<5 else 2
             team_hit = state[6]
 
-            # if team_hit > 0:  [TED] I don't think this should have been here
+            # if team_hit > 0:  [TED] I don't think this should have been here- what if we hit neutral?
 
             # was the damage dealth good or bad?
             if (my_team==1 and team_hit==2) or (my_team==2 and team_hit==1):
