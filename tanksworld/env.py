@@ -68,9 +68,10 @@ class TanksWorldEnv(gym.Env):
                 self.training_tanks.append(i)
 
         #load the obstaces image
-        #path = pathlib.Path(module.__file__).resolve().parent
-        self.barrier_img = cv2.imread('./obstaclemap_fixed.png',1)
-
+        path = pathlib.Path(__file__).resolve().parent
+        image_path = os.path.join(str(path),'obstaclemap_fixed.png')
+        print('****************Loading: ',image_path)
+        self.barrier_img = cv2.imread(image_path,1)
         self.reset(params={})
 
     def seed(self, val):
