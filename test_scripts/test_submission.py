@@ -18,7 +18,7 @@ if __name__=='__main__':
 			death_penalty=True,                    # do you get -1 for dying
 			static_tanks=[],                      # indices of tanks that do not move (not exposed externally, changes number of controllable players)
 			random_tanks=[1,2,3,4,5,6,7,8,9],      # indices of tanks that move randomly (not exposed externally, changes number of controllable players)
-			disable_shooting=[],              # indices of tanks that cannot shoot (i.e. to allow random movement without shooting)
+			disable_shooting=[1,2,3,4,5,6,7,8,9],              # indices of tanks that cannot shoot (i.e. to allow random movement without shooting)
 			reward_weight=1.0,
 			penalty_weight=1.0,
 			will_render=True)
