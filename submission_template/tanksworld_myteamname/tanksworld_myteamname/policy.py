@@ -11,7 +11,7 @@ class Policy:
 		""" Do any game start setup here """
 		pass
 
-	def get_actions(self, state):
+	def get_actions(self, state, info=None):
 		
 		#double checking some data sizes
 		assert state.shape == (128,128,4)
