@@ -29,7 +29,8 @@ if __name__=='__main__':
 
     done = False
     state = env.reset()
+    info = {}
     while not done:
-        action = policy.get_actions(state[0])
+        action = policy.get_actions(state[0],info)
         state,reward,done,info = env.step([action])
     print("Test completed successfully!")
