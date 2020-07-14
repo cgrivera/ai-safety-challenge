@@ -27,6 +27,10 @@ class Policy:
 		""" Do any game start setup here """
 		pass
 
-	def get_actions(self, state):
+        #the info dict gets passed as well, you can make use of it or not
+        #details about the reward compoents are included
+        #info['blue_stats']["penalty_weight"] , in the range [0-1]
+        #info['blue_stats']["friendly_fire"], [True or False]
+	def get_actions(self, state,info=None):
 		action,_ = self.model.predict(state)
 		return action
