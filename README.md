@@ -1,4 +1,4 @@
-Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) | [AI Arena](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/)
+Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) 
 
 # AI Safety Challenge (TanksWorld)
 
@@ -12,17 +12,12 @@ For rules and evaluation see: [Evaluation](./Evaluation.md)
 
 For submission guidelines see: [Submission](./Submission.md)
 
-If you are new to deep reinforcement learning (DRL), it is recommended to read up on the basics, especially the OpenAI Gym interface.  See the [AI Arena Documentation](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/docs) for an overview of DRL and the gym interface.
 
 ## Installation Quick Start Guide
 These install instructions are for Linux clients.  We recommend installing the anaconda distribution of python to manage the dependencies.
 
 #### Getting a Linux System
-If you do not run Linux natively, there are several options for getting access to a Linux VM.  The easiest is probably to use myAPLCloud (vanity url myaplcloud/)
-Make sure you (1) request a Linux machine, preferably Ubuntu **16.04**, and (2) request intranet access, not DMZ, so you can access gitlab.
-
-More information about myAPLCloud can be found here:
-https://aplweb.jhuapl.edu/services/Pages/APLCloud.aspx
+We've tested extensively on Ubuntu **16.04**, although other linux OS systems may work.
 
 
 #### Anaconda Install
@@ -63,15 +58,12 @@ if you experience errors related to SSL certificates.  You will have to download
 https://aplweb.jhuapl.edu/services/IT%20Services%20Documents/Howto_Add_the_APL_Root_Certificate_to_Ubuntu.pdf
 You should have a certificate file that you can rename to certificate.crt.  When you install dependencies with pip you may have to use the --cert flag followed by the loacation of the APL certificate.  See the example below.
 ````sh
-conda config --set ssl_verify /the/path/to/the/apl/certificate.crt
-pip install --cert /the/path/to/the/apl/certificate.crt  mlagents==0.9.3 stable_baselines==2.9.0
+pip install  mlagents==0.9.3 stable_baselines==2.9.0
 ````
 
 
 Clone the ai safety challenge and the AI arena repo and install.
 ```` sh
-git clone https://gitlab.jhuapl.edu/rivercg1/ai-safety-challenge.git
-git clone https://gitlab.jhuapl.edu/staleew1/ai-arena-v5.git
 pip install -e ai-safety-challenge/
 pip install -e ai-arena-v5/
 ````
@@ -92,7 +84,7 @@ mpiexec -n 14 python my_main_script.py --exe <</absolute/path/to/the/executable>
 
 
 ## TanksWorld Details
-
+See additional details about the environment in the [manuscript](https://arxiv.org/abs/2002.11174)
 
 
 ### Environment Description
@@ -113,20 +105,10 @@ For details about the states, actions, and rewards coming to and from the enviro
 Download the headed version of of the tanksworld environment.
 
 
-## AI Arena
-
-The example code provided uses the AI Arena to interface with the TanksWorld environment and manage AI training.  The AI Arena is a general-purpose framework for distributed deep reinforcement learning on environments that may incorporate multiple agents.  For documentation on this framework, please see the AI Arena repo on gitlab: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5
-
-In particular, look at the documentation located at: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/docs
-
-Included in the AI Arena are examples of using PPO (which is used in the example here) and also for using custom algorithms, which may be helpful to you if you want full control over the learning process.  The example of a custom policy can be found here: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/examples/custom_policy_random_agent
-
-
-
 ## Errors FAQ
 
 ### GLibC related errors.
-We have seen this on myaplcloud machines for 16.04 ubuntu.  The solution is to update the glibc libraries on the machine.
+Some systems experience problems related to glibc.  The solution is to update the glibc libraries on the machine.
 
 ````sh
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
@@ -136,29 +118,10 @@ export NO_AT_BRIDGE=1
 sudo apt-get install libstdc++6
 ````
 
-### Errors related to SSL certificates
-WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:852)),)': /simple/mlagents/
-Could not fetch URL https://pypi.org/simple/mlagents/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org', port=443): Max retries exceeded with url
-
-
-APL has a certificate that it wants staff to use. The solution is to register the certificate with conda and pip.  There are two options for conda.  Either disable ssl verification
-
-conda config --set ssl_verify false
-
-or
-
-Download the APL certificate.  Details are here https://aplweb.jhuapl.edu/services/IT%20Services%20Documents/Howto_Add_the_APL_Root_Certificate_to_Ubuntu.pdf
-And set the location of the certificate for conda in a command like this.
-
-conda config --set ssl_verify /the/path/to/the/apl/certificate.crt
-
-For pip, you may need to add the --cert flag to register the certificate. Put the approporate path to your certificate file in the command below.
-
-```` sh
-pip install --cert /path/to/the/certificate.crt mlagents==0.9.3 stable_baselines==2.9.0
-````
-
 
 ## Underlying Unity Simulation
 
 ### NOTE: This has been moved to: [UnitySim.md](./UnitySim.md)
+
+## License
+GPL v3
