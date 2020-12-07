@@ -40,7 +40,7 @@ bash
 You should now see "(base)" on the far left of your terminal prompt, indicating you are in the base conda environment.  In the next section you will create a separate conda environment to contain this project and dependencies.
 
 #### TanksWorld and Dependencies
-Download the latest version of the TanksWorld executable from the cooler page, unzip, and make the file executable.  https://cooler.jhuapl.edu/file/group/354691/all
+The tanksworld executable is bundled in the repo.
 ```` sh
 unzip <latest_aisafety_build.zip>
 chmod -R 755 aisafetytanks
@@ -54,9 +54,6 @@ conda install -c conda-forge tensorflow=1.14.0 mpi4py
 pip install mlagents==0.9.3 stable_baselines==2.9.0
 ````
 
-if you experience errors related to SSL certificates.  You will have to download the APL certificate at
-https://aplweb.jhuapl.edu/services/IT%20Services%20Documents/Howto_Add_the_APL_Root_Certificate_to_Ubuntu.pdf
-You should have a certificate file that you can rename to certificate.crt.  When you install dependencies with pip you may have to use the --cert flag followed by the loacation of the APL certificate.  See the example below.
 ````sh
 pip install  mlagents==0.9.3 stable_baselines==2.9.0
 ````
