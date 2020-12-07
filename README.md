@@ -121,4 +121,4 @@ sudo apt-get install libstdc++6
 ### NOTE: This has been moved to: [UnitySim.md](./UnitySim.md)
 
 ## License
-GPL v3
+MIT
