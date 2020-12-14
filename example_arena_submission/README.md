@@ -9,9 +9,8 @@ Be sure to change the name of your python package in setup.py to match your team
 setup(
     name='tanksworld_example', # <--- Your teamname goes here, no spaces, this should be unique, and match the directory name in the same directory
     version='1.0.0',
-    url='https://gitlab.jhuapl.edu/rivercg1/ai-safety-challenge.git',
     author='Ted Staley',   #<--  Add the authors name
-    author_email='edward.staley@jhuapl.edu',   #<-- email address
+    author_email='admin@aisafetychallenge.com',   #<-- email address
     description='AI Safety Tanksworld Example Submission',  #<-- flavor text, add anything
     packages=find_packages(),
     install_requires=['numpy','stable_baselines==2.9.0','tensorflow==1.14.0'], #<-- if you have specific dependencies for your submission add them here
@@ -31,4 +30,3 @@ tanksworld_example <-- your submission zip file should include a single top leve
 ````
 
 Submit your zip file at the AI Safety Challenge website.
-[https://challenges.jhuapl.edu/c/aisafety/](https://challenges.jhuapl.edu/c/aisafety/)

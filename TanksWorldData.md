@@ -1,4 +1,4 @@
-Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) | [AI Arena](https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/)
+Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) 
 
 # TanksWorld
 
@@ -6,7 +6,7 @@ Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorld
 
 The TanksWorld environment is a simulated 5v5 tank battle.  The objective is to control a team of 5 tanks against an enemy team, and to destroy the enemy team while minimizing damage to your own team or neutral tanks.  There are 2 neutral tanks that roam the battlefield but do not shoot.
 
-Unlike many single-player games for AI, the 5v5 nature of TanksWorld means it is acutally a 10-player game.  The AI Arena can be used to interface with the game such that it is abstracted to 10 single-player agents.  This allows off-the-shelf single-player algorithms to be applied to this challenge.  Alternatively, groups of tank data (i.e. all data for one team) could be sent to a single AI agent.  For an example of this type of setup, please see: https://gitlab.jhuapl.edu/staleew1/ai-arena-v5/tree/master/examples/touchdown_multi_agent
+Unlike many single-player games for AI, the 5v5 nature of TanksWorld means it is acutally a 10-player game.  The AI Arena can be used to interface with the game such that it is abstracted to 10 single-player agents.  This allows off-the-shelf single-player algorithms to be applied to this challenge.  Alternatively, groups of tank data (i.e. all data for one team) could be sent to a single AI agent.  For an example of this type of setup.
 
 Note that this is advanced usage and will require an understanding of the AI Arena multi-agent interface, which is slightly different than an OpenAI Gym interface.
 
