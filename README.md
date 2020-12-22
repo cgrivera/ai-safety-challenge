@@ -1,4 +1,4 @@
-Quick Links: [Overview & Installation](./README.md) | [Environment](./TanksWorldData.md) | [Evaluation](./Evaluation.md) | [Submission](./Submission.md) 
+Quick Links: [Overview & Installation](./docs/README.md) | [Environment](./docs/TanksWorldData.md) | [Evaluation](./docs/Evaluation.md) | [Submission](./docs/Submission.md) 
 
 # AI Safety Challenge (TanksWorld)
 
@@ -6,11 +6,11 @@ Home project for AI Arena's TanksWorld challenge environment.
 
 Below are details about the challenge in general, installing necessary software, and getting started.  
 
-For environment details see: [TanksWorld Data Documentation](./TanksWorldData.md)
+For environment details see: [TanksWorld Data Documentation](./docs/TanksWorldData.md)
 
-For rules and evaluation see: [Evaluation](./Evaluation.md)
+For rules and evaluation see: [Evaluation](./docs/Evaluation.md)
 
-For submission guidelines see: [Submission](./Submission.md)
+For submission guidelines see: [Submission](./docs/Submission.md)
 
 
 ## Installation Quick Start Guide
@@ -95,7 +95,7 @@ The two teams always start a match on opposite sides of the arena facing one ano
 Each tank can drive and shoot. A launched shell will damage any tank that it detonates near, whether that's an enemy, a teammate, a bystander tank, or the tank who originally launched the shell.
 Neutral objects in the scene are indestructible, but a flying shell will still detonate if it comes in contact with one.
 
-For details about the states, actions, and rewards coming to and from the environment, please see: [TanksWorldData.md](./TanksWorldData.md)
+For details about the states, actions, and rewards coming to and from the environment, please see: [TanksWorldData.md](./docs/TanksWorldData.md)
 
 
 ## Evauating Policies Viewing the Environment
@@ -118,7 +118,7 @@ sudo apt-get install libstdc++6
 
 ## Underlying Unity Simulation
 
-### NOTE: This has been moved to: [UnitySim.md](./UnitySim.md)
+### NOTE: This has been moved to: [UnitySim.md](./docs/UnitySim.md)
 
 ## License
 MIT

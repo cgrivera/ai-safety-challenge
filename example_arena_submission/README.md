@@ -1,3 +1,4 @@
+# ©2020 Johns Hopkins University Applied Physics Laboratory LLC.
 ### Example submission template for AI Arena based submissions.
 
 Example submission templates have been added to the AI Safety Challenge repo.  There is a template for those of you who have trained through the AI Arena and produced a model weights file (by default this is called ppo_save.zip).  An example network weights file was also added to submission example.  There is also a basic template to illustrate the minimum required elements for sumissiont.  

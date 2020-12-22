@@ -1,3 +1,4 @@
+# ©2020 Johns Hopkins University Applied Physics Laboratory LLC.
 # first argument is the zip file
 # the second argument is the absolute path to the tanksworld executable
 unzip -o -d test $1

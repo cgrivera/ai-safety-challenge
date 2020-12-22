@@ -1,3 +1,4 @@
+# ©2020 Johns Hopkins University Applied Physics Laboratory LLC.
 from tanksworld.env import TanksWorldEnv
 import importlib
 import argparse
