@@ -59,14 +59,14 @@ pip install  mlagents==0.9.3 stable_baselines==2.9.0
 ````
 
 
-Clone the ai safety challenge and the AI arena repo and install.
+Clone the ai safety challenge and the AI arena repo and install.  The ai arena is located at https://github.com/cgrivera/ai-arena
 ```` sh
 pip install -e ai-safety-challenge/
-pip install -e ai-arena-v5/
+pip install -e ai-arena/
 ````
 
 Go into the tankworld folder and run the main script with mpi.  The -n flag indicates the number of processes that will run simultaneously. Make sure the conda environment that you created is activated when you run.
- - exe is the absolute path to the latest tanksworld executable
+ - exe is the absolute path to the latest tanksworld executable located in the exe directory
  - logdir is the location that logfiles, saved policies, and performance plots will be saved.
  - n is the number of processes, if you add enough processes, additional environments will be run
 ```` sh
