@@ -40,9 +40,8 @@ bash
 You should now see "(base)" on the far left of your terminal prompt, indicating you are in the base conda environment.  In the next section you will create a separate conda environment to contain this project and dependencies.
 
 #### TanksWorld and Dependencies
-The tanksworld executable is bundled in the repo.
+The tanksworld executable is bundled in the repo in the exe/ directory.  Make sure the executable has the right permissions.  This repo includes both a headless and a graphical version of the tanksworld environment.  Use the headless execuatable for training and use the graphical version to view the results.
 ```` sh
-unzip <latest_aisafety_build.zip>
 chmod -R 755 aisafetytanks
 ````
 
