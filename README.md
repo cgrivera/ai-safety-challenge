@@ -1,4 +1,4 @@
-Quick Links: [Overview & Installation](./docs/README.md) | [Environment](./docs/TanksWorldData.md) | [Evaluation](./docs/Evaluation.md) | [Submission](./docs/Submission.md) 
+Quick Links: [Overview & Installation](README.md) | [Environment](./docs/TanksWorldData.md) | [Evaluation](./docs/Evaluation.md) | [Submission](./docs/Submission.md) 
 
 # AI Safety Challenge (TanksWorld)
 
