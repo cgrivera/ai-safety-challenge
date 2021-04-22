@@ -89,7 +89,7 @@ class TanksWorldEnv(gym.Env):
     #DO this in reset to allow seed to be set
     def __init__(self, exe, action_repeat=6, image_scale=128, timeout=500, friendly_fire=True, take_damage_penalty=True, kill_bonus=True, death_penalty=True,
         static_tanks=[], random_tanks=[], disable_shooting=[], penalty_weight=1.0, reward_weight=1.0, will_render=False,
-        speed_red=1.0, speed_blue=1.0, tblogs='runs/stats'):
+        speed_red=1.0, speed_blue=1.0, tblogs='runs/stats',range_limit=10,null_score_tanks=[]):
 
         # call reset() to begin playing
         self._workerid = MPI.COMM_WORLD.Get_rank() #int(os.environ['L2EXPLORER_WORKER_ID'])
@@ -99,6 +99,8 @@ class TanksWorldEnv(gym.Env):
         self.action_space = gym.spaces.box.Box(-1,1,(3,))
         self.action_space = None
         self._seed = None
+        self.range_limit = range_limit
+        self.no_score= null_score_tanks
 
         self.timeout = timeout
         self.action_repeat=action_repeat  # repeat action this many times
@@ -155,7 +157,7 @@ class TanksWorldEnv(gym.Env):
 
         barriers = self.barrier_img/255.0  #np.array(self._env_info.visual_observations[1][0])
 
-        ret_states = [minimap_for_player(state_reformat,i,barriers) for i in self.training_tanks]
+        ret_states = [minimap_for_player(state_reformat,i,barriers,self.range_limit) for i in self.training_tanks]
 
         if self.will_render:
             self.disp_states = [displayable_rgb_map(s) for s in ret_states]
@@ -389,6 +391,12 @@ class TanksWorldEnv(gym.Env):
         health = [self._env_info.vector_observations[0][i*TanksWorldEnv._tank_data_len + 3] for i in range(12)]
         delta_health = [self.previous_health[i]-health[i] for i in range(12)]
 
+        #Ignore impacts to tanks listed under no_score
+        null_score = False
+        for tank in self.no_score:
+            if delta_health[tank]!=0:
+                null_score=True
+
         self.update_team_stats(health)
 
         reward = [0.0]*10
@@ -405,7 +413,7 @@ class TanksWorldEnv(gym.Env):
             team_hit = state[6]
 
             if team_hit != 0:
-                print(i, team_hit)
+                print('tank',i,'hit team', team_hit)
 
             shell_x = state[7]
             new_shot = False
@@ -430,16 +438,21 @@ class TanksWorldEnv(gym.Env):
             #eliminate friendly fire (and neutral) penalties if required
             if multiplier < 0 and not self.penalties:
                 multiplier = 0.0
+            
+            if null_score:
+                multiplier=0.0
 
             reward[i] += multiplier * damage_dealt
 
-            if delta_health[i] != 0.0:
+            if delta_health[i] != 0.0 and i not in self.no_score:
                 if health[i] <= 0.0 and self.death_penalty:
                     reward[i] -= 1.0 * self.penalty_weight
                 elif self.take_damage_penalty:
                     reward[i] -= delta_health[i] * self.penalty_weight / 100.0
 
-            self.update_tank_stats(i, state, delta_health[i], my_stats, enemy_stats, new_shot)
+            
+            if not null_score:
+                self.update_tank_stats(i, state, delta_health[i], my_stats, enemy_stats, new_shot)
 
         self.previous_health = health
         return [reward[i] for i in self.training_tanks]
