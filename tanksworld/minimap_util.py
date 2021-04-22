@@ -56,7 +56,7 @@ def draw_bullet(image, x, y):
     cv2.circle(image, (int(x),int(y)), 2, 255.0, thickness=1)
     return image
 
-def draw_tanks_in_channel(tank_data, reference_tank):
+def draw_tanks_in_channel(tank_data, reference_tank,range_limit):
 
     img = np.zeros((IMG_SZ, IMG_SZ, 1), np.uint8)
 
@@ -67,15 +67,15 @@ def draw_tanks_in_channel(tank_data, reference_tank):
             continue
 
         rel_x, rel_y = point_relative_point_heading([td[0],td[1]], reference_tank[0:2], reference_tank[2])
-
+        dist = math.sqrt(rel_x**2+rel_y**2)
         x = (rel_x/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
         y = (rel_y/UNITY_SZ) * SCALE + float(IMG_SZ)*0.5
         heading = td[2]
         health = td[3]
 
         rel_heading = heading - reference_tank[2]
-
-        img = draw_arrow(img, x, y, rel_heading, health)
+        if dist<range_limit:
+            img = draw_arrow(img, x, y, rel_heading, health)
 
         # draw bullet if present
         if len(td) > 4:
@@ -157,7 +157,7 @@ def barriers_for_player(barriers, reference_tank):
     return ch
 # expects state data chopped on a tank by tank basis
 # ie. for 5 red, 5 blue, 2 neutral, expects a length 12 array
-def minimap_for_player(tank_data_original, tank_idx, barriers):
+def minimap_for_player(tank_data_original, tank_idx, barriers,range_limit):
 
     barriers = np.flipud(barriers)
 
@@ -182,10 +182,10 @@ def minimap_for_player(tank_data_original, tank_idx, barriers):
         neutral = tank_data[10:]
         flip = False
 
-    this_channel = draw_tanks_in_channel([my_data], my_data)
-    ally_channel = draw_tanks_in_channel(ally, my_data)
-    enemy_channel = draw_tanks_in_channel(enemy, my_data)
-    neutral_channel = draw_tanks_in_channel(neutral, my_data)
+    this_channel = draw_tanks_in_channel([my_data], my_data,range_limit)
+    ally_channel = draw_tanks_in_channel(ally, my_data,range_limit)
+    enemy_channel = draw_tanks_in_channel(enemy, my_data,range_limit)
+    neutral_channel = draw_tanks_in_channel(neutral, my_data,range_limit)
     #barriers_channel = np.zeros((84, 84, 1), np.uint8)
     #barriers_channel[:80,:80,0] = barriers[:,:,0]
     barriers_channel = barriers_for_player(barriers, my_data)
